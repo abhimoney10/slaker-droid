@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">Slaker</string>
     <string name="action_settings">Settings</string>
+    <string name="buttonInstructions">Instructions</string>
+    <string name="buttonStartExperiment">Start Experiment</string>
+    <string name="buttonFirstPicture">Take the first picture</string>
+    <string name="instructions">Here will be he instructions</string>
+    <string name="first_picture">Here will be the first picture frame</string>
 </resources>
