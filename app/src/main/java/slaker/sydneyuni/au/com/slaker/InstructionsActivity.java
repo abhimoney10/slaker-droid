@@ -1,9 +1,9 @@
 package slaker.sydneyuni.au.com.slaker;
 
+import android.app.Activity;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 
-public class InstructionsActivity extends AppCompatActivity {
+public class InstructionsActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
