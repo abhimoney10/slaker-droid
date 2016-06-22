@@ -6,13 +6,14 @@
     android:layout_height="match_parent"
     tools:context="slaker.sydneyuni.au.com.slaker.FirstPicture">
 
-    <org.opencv.android.JavaCameraView
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:id="@+id/FirstPictureCameraView"
-        opencv:show_fps="true"
-        opencv:camera_id="any"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
+        <org.opencv.android.JavaCameraView
+            android:id="@+id/FirstPictureCameraView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            opencv:show_fps="true"
+            opencv:camera_id="any" >
+
+        </org.opencv.android.JavaCameraView>
+
 
 </RelativeLayout>

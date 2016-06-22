@@ -2,38 +2,47 @@ package slaker.sydneyuni.au.com.slaker;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.SurfaceView;
+import android.view.View;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.JavaCameraView;
-import org.opencv.android.OpenCVLoader;
-import org.opencv.core.Mat;
 import org.opencv.android.LoaderCallbackInterface;
+import org.opencv.android.OpenCVLoader;
+import org.opencv.core.CvType;
+import org.opencv.core.Mat;
+import org.opencv.imgcodecs.Imgcodecs;
+import org.opencv.imgproc.Imgproc;
 
 
-public class FirstPicture extends Activity implements CameraBridgeViewBase.CvCameraViewListener2{
+public class FirstPicture extends Activity implements CameraBridgeViewBase.CvCameraViewListener2, View.OnTouchListener {
+
+    private JavaCameraView mOpenCvCameraView;
+    String file;
+    Mat mImage;
+    Mat mImageF;
+
 
     private BaseLoaderCallback mLoaderCallBack = new BaseLoaderCallback(this) {
         @Override
         public void onManagerConnected(int status) {
-            switch(status){
-            case LoaderCallbackInterface.SUCCESS:
-                {
-                    String TAG= "Opencv: ";
-                    Log.d(TAG,"OpenCv loaded succesfully");
+            switch (status) {
+                case LoaderCallbackInterface.SUCCESS: {
+                    Log.d("Mario EVENT", "OpenCv loaded succesfully");
                     mOpenCvCameraView.enableView();
                     break;
                 }
-            default:
-            {
-                super.onManagerConnected(status);
-            }
+                default: {
+                    super.onManagerConnected(status);
+                }
             }
         }
     };
-    private JavaCameraView mOpenCvCameraView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,31 +52,55 @@ public class FirstPicture extends Activity implements CameraBridgeViewBase.CvCam
         mOpenCvCameraView = (JavaCameraView) findViewById(R.id.FirstPictureCameraView);
         mOpenCvCameraView.setVisibility(SurfaceView.VISIBLE);
         mOpenCvCameraView.setCvCameraViewListener(this);
-    }
-    public void onResume(){
-        super.onResume();
-        OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_1_0,this,mLoaderCallBack);
+        mOpenCvCameraView.setOnTouchListener(this);
     }
 
-    public void onDestroy(){
+    public void onResume() {
+        super.onResume();
+        OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_1_0, this, mLoaderCallBack);
+    }
+
+
+
+
+    public void onDestroy() {
         super.onDestroy();
-        if(mOpenCvCameraView != null){
+        if (mOpenCvCameraView != null) {
             mOpenCvCameraView.disableView();
         }
     }
 
     @Override
     public void onCameraViewStarted(int width, int height) {
+        mImage = new Mat(height, width, CvType.CV_8UC4);
+        mImageF = new Mat(height, width, CvType.CV_8UC4);
 
     }
 
     @Override
     public void onCameraViewStopped() {
+        mImage.release();
+        mImageF.release();
 
     }
 
     @Override
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
-        return inputFrame.rgba();
+
+        mImage = inputFrame.rgba();
+        Imgproc.Canny(mImage, mImageF,0,150);
+        return mImageF; // This function must return
+    }
+
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        file = Environment.getExternalStorageDirectory() + "/Images_Slaker/test.png";
+
+        Boolean bool = Imgcodecs.imwrite(file,mImageF);
+
+        if (bool) {
+            Log.i("OpenCv EVENT", "SUCCESS writing image to external storage");
+        }
+            return false;
     }
 }
