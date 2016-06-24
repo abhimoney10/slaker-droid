@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
 import android.view.View;
+import android.widget.Button;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase;
@@ -19,7 +20,9 @@ import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 
 
-public class FirstPicture extends Activity implements CameraBridgeViewBase.CvCameraViewListener2, View.OnTouchListener {
+
+
+public class FirstPicture extends Activity implements CameraBridgeViewBase.CvCameraViewListener2, View.OnTouchListener, View.OnClickListener{
 
     private JavaCameraView mOpenCvCameraView;
     String file;
@@ -53,6 +56,11 @@ public class FirstPicture extends Activity implements CameraBridgeViewBase.CvCam
         mOpenCvCameraView.setVisibility(SurfaceView.VISIBLE);
         mOpenCvCameraView.setCvCameraViewListener(this);
         mOpenCvCameraView.setOnTouchListener(this);
+
+        Button saveImage = (Button) findViewById(R.id.buttonSaveImage);
+        saveImage.setOnClickListener(this);
+
+
     }
 
     public void onResume() {
@@ -103,4 +111,39 @@ public class FirstPicture extends Activity implements CameraBridgeViewBase.CvCam
         }
             return false;
     }
+
+    @Override
+    public void onClick(View v) {
+
+        switch (v.getId()) {
+
+            case R.id.buttonSaveImage:
+
+                file = Environment.getExternalStorageDirectory() + "/Images_Slaker/test.png";
+
+                Boolean bool = Imgcodecs.imwrite(file,mImageF);
+
+                if (bool) {
+                    Log.i("OpenCv EVENT", "SUCCESS writing image to external storage");
+                }
+
+                break;
+
+//            case R.id.twoButton:
+//                // do your code
+//                break;
+//
+//            case R.id.threeButton:
+//                // do your code
+//                break;
+//
+//            default:
+//                break;
+//          }
+
+        }
+    }
+
 }
+
+
