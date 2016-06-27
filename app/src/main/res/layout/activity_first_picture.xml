@@ -24,5 +24,18 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/buttonSaveImage"
                 android:text="@string/buttonSaveImage" />
+            <Button
+                android:id="@+id/buttonSegment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="@string/buttonSegment"
+                android:text="@string/buttonSegment" />
+
+            <Button
+                android:id="@+id/buttonBurstPicture"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="@string/buttonBurstPicture"
+                android:text="@string/buttonBurstPicture" />
 
 </LinearLayout>
