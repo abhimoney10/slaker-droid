@@ -43,6 +43,7 @@ public class FirstPicture extends Activity implements CameraBridgeViewBase.CvCam
     WatershedSegmenter segmenter;
     static int count;
     boolean booli;
+    boolean booleanOnTouch = true;
 
 
     public class WatershedSegmenter{
@@ -58,10 +59,6 @@ public class FirstPicture extends Activity implements CameraBridgeViewBase.CvCam
     public Mat Segmentation(Mat image){
         Imgproc.cvtColor(image, threeChannel, Imgproc.COLOR_BGR2GRAY );
         Imgproc.threshold(threeChannel, threeChannel, 40, 255, Imgproc.THRESH_BINARY);
-//        Log.i("OpenCv EVENT", String.valueOf(threeChannel.depth()));
-//        Log.i("OpenCv EVENT", String.valueOf(threeChannel.channels()));
-//        Log.i("OpenCv EVENT", String.valueOf(fg.depth()));
-//        Log.i("OpenCv EVENT", String.valueOf(fg.channels()));
         Imgproc.erode(threeChannel,fg,erodeMask,erodePoint,5);
         Imgproc.dilate(fg,bg,dilateMask,dilatePoint,5);
         Imgproc.threshold(bg,bg,40, 255,Imgproc.THRESH_BINARY);
@@ -85,7 +82,6 @@ public class FirstPicture extends Activity implements CameraBridgeViewBase.CvCam
         }
     };
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -99,13 +95,8 @@ public class FirstPicture extends Activity implements CameraBridgeViewBase.CvCam
         Button saveImage = (Button) findViewById(R.id.buttonSaveImage);
         saveImage.setOnClickListener(this);
 
-        Button segmentImage = (Button) findViewById(R.id.buttonSegment);
-        segmentImage.setOnClickListener(this);
-
         Button startExperiment = (Button) findViewById(R.id.buttonBurstPicture);
         startExperiment.setOnClickListener(this);
-
-
 
     }
 
@@ -173,20 +164,26 @@ public class FirstPicture extends Activity implements CameraBridgeViewBase.CvCam
 
         mImage = inputFrame.rgba();
 
-//        Imgproc.Canny(mImage, mImageF,0,150);
-        return mImage; // This function must return
+        if(booleanOnTouch) {
+            mImageF=mImage;
+
+        }else {
+            mImageF = Segmentation(mImage);
+
+        }
+
+        return mImageF; // This function must return
     }
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-        file = Environment.getExternalStorageDirectory() + "/Images_Slaker/test.png";
 
-        Boolean bool = Imgcodecs.imwrite(file,mImageF);
-
-        if (bool) {
-            Log.i("OpenCv EVENT", "SUCCESS writing image to external storage");
+        if(booleanOnTouch){
+            booleanOnTouch = false;
+        }else {
+            booleanOnTouch = true;
         }
-            return false;
+        return false;
     }
 
     @Override
@@ -198,7 +195,7 @@ public class FirstPicture extends Activity implements CameraBridgeViewBase.CvCam
 
                 file = Environment.getExternalStorageDirectory() + "/Images_Slaker/test.png";
 
-                Boolean bool = Imgcodecs.imwrite(file,mImage);
+                Boolean bool = Imgcodecs.imwrite(file,mImageF);
 
                 if (bool) {
                     Log.i("OpenCv EVENT", "SUCCESS writing image to external storage");
@@ -206,22 +203,7 @@ public class FirstPicture extends Activity implements CameraBridgeViewBase.CvCam
 
                 break;
 
-            case R.id.buttonSegment:
-
-                bg = Segmentation(mImage);
-
-                file = Environment.getExternalStorageDirectory() + "/Images_Slaker/test.png";
-
-                bool = Imgcodecs.imwrite(file,bg);
-
-                if (bool) {
-                    Log.i("OpenCv EVENT", "SUCCESS writing image to external storage");
-                }
-
-                break;
-//
             case R.id.buttonBurstPicture:
-
 
                 Timer timer = new Timer();
                 timer.schedule(new TimerTask()

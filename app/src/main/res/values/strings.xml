@@ -7,6 +7,5 @@
     <string name="instructions">Here will be he instructions</string>
     <string name="first_picture">Here will be the first picture frame</string>
     <string name="buttonSaveImage">Save Image</string>
-    <string name="buttonSegment">Segment!</string>
     <string name="buttonBurstPicture">Start</string>
 </resources>

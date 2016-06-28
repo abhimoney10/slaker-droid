@@ -14,28 +14,30 @@
                     android:clickable="false"
                     android:longClickable="false"
                     android:layout_width="0dp"
-                    android:layout_weight="1">
+                    android:layout_weight="2.27">
             </org.opencv.android.JavaCameraView>
 
 
-            <Button
-                android:id="@+id/buttonSaveImage"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:hint="@string/buttonSaveImage"
-                android:text="@string/buttonSaveImage" />
-            <Button
-                android:id="@+id/buttonSegment"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:hint="@string/buttonSegment"
-                android:text="@string/buttonSegment" />
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="85dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="0.05">
 
-            <Button
-                android:id="@+id/buttonBurstPicture"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:hint="@string/buttonBurstPicture"
-                android:text="@string/buttonBurstPicture" />
+        <Button
+                    android:id="@+id/buttonSaveImage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/buttonSaveImage"
+                    android:text="@string/buttonSaveImage" />
+
+        <Button
+                    android:id="@+id/buttonBurstPicture"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/buttonBurstPicture"
+                    android:text="@string/buttonBurstPicture" />
+    </LinearLayout>
 
 </LinearLayout>
