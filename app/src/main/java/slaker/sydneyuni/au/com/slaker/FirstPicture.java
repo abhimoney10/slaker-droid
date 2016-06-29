@@ -31,8 +31,10 @@ public class FirstPicture extends Activity implements CameraBridgeViewBase.CvCam
     private JavaCameraView mOpenCvCameraView;
     String file;
     Mat mImage;
-    Mat mImageF;
-    Mat markers;
+    Mat mImageB;
+    Mat mImageW;
+
+
     Mat threeChannel;
     Mat fg;
     Mat erodeMask;
@@ -40,30 +42,49 @@ public class FirstPicture extends Activity implements CameraBridgeViewBase.CvCam
     Mat dilateMask;
     Point dilatePoint;
     Mat bg;
-    WatershedSegmenter segmenter;
+
+    Mat markers;
+
+
     static int count;
-    boolean booli;
-    boolean booleanOnTouch = true;
+    boolean onClickbool;
+    boolean firstPicBool;
+    boolean onTouchBoolean = true;
 
 
-    public class WatershedSegmenter{
 
-        public Mat process(Mat image){
-            markers.convertTo(markers,CvType.CV_32S);
-            Imgproc.watershed(image, markers);
-            markers.convertTo(markers,CvType.CV_32SC1);
-            return markers;
-        }
+    public Mat watershedSegmenter(Mat image, Mat mark){
+        Imgproc.cvtColor(image,mImageW,Imgproc.COLOR_BGRA2BGR,4);
+        Log.d("EVENT", "watershedSegmenter: image Channels  :  " + mImageW.channels());
+        mark.convertTo(mark,CvType.CV_32SC4);
+        Log.d("EVENT", "watershedSegmenter: markers Channels  :  " + mark.channels());
+        Imgproc.watershed(mImageW, mark);
+        mark.convertTo(mark,CvType.CV_8U);
+        return mark;
     }
 
-    public Mat Segmentation(Mat image){
-        Imgproc.cvtColor(image, threeChannel, Imgproc.COLOR_BGR2GRAY );
-        Imgproc.threshold(threeChannel, threeChannel, 40, 255, Imgproc.THRESH_BINARY);
-        Imgproc.erode(threeChannel,fg,erodeMask,erodePoint,5);
-        Imgproc.dilate(fg,bg,dilateMask,dilatePoint,5);
-        Imgproc.threshold(bg,bg,40, 255,Imgproc.THRESH_BINARY);
-        return bg;
+
+    public Mat binarize(Mat image){
+        Imgproc.cvtColor(image, threeChannel, Imgproc.COLOR_RGB2GRAY);
+        Imgproc.threshold(threeChannel, threeChannel, 100, 255, Imgproc.THRESH_BINARY_INV);
+        Imgproc.distanceTransform(threeChannel,image,Imgproc.CV_DIST_L2, Imgproc.CV_DIST_MASK_PRECISE);
+        image.convertTo(image,CvType.CV_8U);
+        Imgproc.threshold(image, image, 10, 255, Imgproc.THRESH_BINARY);
+
+        Imgproc.Canny(image,image,3,3);
+        Log.d("EVENT", "binarize: "+image.channels());
+//        Log.d("EVENT", "binarize: "+threeChannel.channels());
+//        Imgproc.erode(threeChannel,fg,erodeMask,erodePoint,2);
+//
+//        Imgproc.dilate(threeChannel,bg,dilateMask,dilatePoint,3);
+//        Imgproc.threshold(bg, bg, 1, 128, Imgproc.THRESH_BINARY_INV);
+//
+//        Core.addWeighted(fg,1,bg,1,1,markers);
+
+        return image;
     }
+
+
 
 
     private BaseLoaderCallback mLoaderCallBack = new BaseLoaderCallback(this) {
@@ -92,17 +113,24 @@ public class FirstPicture extends Activity implements CameraBridgeViewBase.CvCam
         mOpenCvCameraView.setCvCameraViewListener(this);
         mOpenCvCameraView.setOnTouchListener(this);
 
+
         Button saveImage = (Button) findViewById(R.id.buttonSaveImage);
         saveImage.setOnClickListener(this);
 
         Button startExperiment = (Button) findViewById(R.id.buttonBurstPicture);
         startExperiment.setOnClickListener(this);
 
+        Button buttonWatershed = (Button) findViewById(R.id.buttonWatershed);
+        buttonWatershed.setOnClickListener(this);
+
     }
+
 
     public void onResume() {
         super.onResume();
         OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_1_0, this, mLoaderCallBack);
+
+
     }
 
 
@@ -117,32 +145,36 @@ public class FirstPicture extends Activity implements CameraBridgeViewBase.CvCam
 
     @Override
     public void onCameraViewStarted(int width, int height) {
-        mImage = new Mat(height, width, CvType.CV_8U);
-        mImageF = new Mat(height, width, CvType.CV_8U);
+
+        mImage = new Mat(height, width, CvType.CV_32S);
+        mImageB = new Mat(height, width, CvType.CV_32S);
+        mImageW = new Mat(height, width, CvType.CV_8UC3);
+
         threeChannel = new Mat();
 
-        fg = new Mat(mImage.size(),CvType.CV_8U);
+        fg = new Mat(mImage.size(),CvType.CV_32SC1);
         erodeMask = new Mat();
         erodePoint = new Point(-1,-1);
 
 
-        bg = new Mat(mImage.size(),CvType.CV_8U);
+        bg = new Mat(mImage.size(),CvType.CV_32SC1);
         dilateMask = new Mat();
         dilatePoint = new Point(-1,-1);
 
+        markers = new Mat(mImage.size(), CvType.CV_32SC1,new Scalar(0));
 
-        markers = new Mat(mImage.size(),CvType.CV_8U,new Scalar(0));
 
-        segmenter = new WatershedSegmenter();
 //
     }
 
     @Override
     public void onCameraViewStopped() {
         mImage.release();
-        mImageF.release();
-        threeChannel.release();
+        mImageB.release();
+        mImageW.release();
 
+
+        threeChannel.release();
         fg.release();
         erodeMask.release();
 
@@ -150,6 +182,7 @@ public class FirstPicture extends Activity implements CameraBridgeViewBase.CvCam
         dilateMask.release();
 
         markers.release();
+
 
 //        bg.release();
 //
@@ -164,27 +197,25 @@ public class FirstPicture extends Activity implements CameraBridgeViewBase.CvCam
 
         mImage = inputFrame.rgba();
 
-        if(booleanOnTouch) {
-            mImageF=mImage;
-
-        }else {
-            mImageF = Segmentation(mImage);
-
+        if(onTouchBoolean) {
+            mImageB = mImage;
+        } else {
+            mImageB = binarize(mImage);
         }
-
-        return mImageF; // This function must return
+        return mImageB;
     }
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
 
-        if(booleanOnTouch){
-            booleanOnTouch = false;
+        if(onTouchBoolean){
+            onTouchBoolean = false;
         }else {
-            booleanOnTouch = true;
+            onTouchBoolean = true;
         }
         return false;
     }
+
 
     @Override
     public void onClick(View v) {
@@ -194,10 +225,9 @@ public class FirstPicture extends Activity implements CameraBridgeViewBase.CvCam
             case R.id.buttonSaveImage:
 
                 file = Environment.getExternalStorageDirectory() + "/Images_Slaker/test.png";
+                onClickbool = Imgcodecs.imwrite(file,mImageB);
 
-                Boolean bool = Imgcodecs.imwrite(file,mImageF);
-
-                if (bool) {
+                if (onClickbool) {
                     Log.i("OpenCv EVENT", "SUCCESS writing image to external storage");
                 }
 
@@ -211,26 +241,39 @@ public class FirstPicture extends Activity implements CameraBridgeViewBase.CvCam
                     @Override
                     public void run()
                     {
-                        bg = Segmentation(mImage);
+                        bg = binarize(mImage);
                         file = Environment.getExternalStorageDirectory() + "/Images_Slaker/test"+ String.valueOf(count) + ".png";
                         count++;
 
-                        booli=Imgcodecs.imwrite(file,bg);
+                        firstPicBool=Imgcodecs.imwrite(file,bg);
 
-                        if (booli) {
+                        if (firstPicBool) {
                             Log.i("OpenCv EVENT", "SUCCESS writing image to external storage");
                         }
 
                     }
                 }, 0, 1000);
 
+                break;
 
+            case R.id.buttonWatershed:
+                Mat watershed_mat;
+                watershed_mat=watershedSegmenter(mImage, binarize(mImage));
+
+                file = Environment.getExternalStorageDirectory() + "/Images_Slaker/test.png";
+                onClickbool = Imgcodecs.imwrite(file,watershed_mat);
+
+                if (onClickbool) {
+                    Log.i("OpenCv EVENT", "SUCCESS writing image to external storage");
+                }
 
                 break;
 
-
         }
     }
+
+
+
 
 
 }
