@@ -16,13 +16,14 @@ import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfPoint;
 import org.opencv.core.Point;
 import org.opencv.core.Scalar;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class FirstPicture extends Activity implements CameraBridgeViewBase.CvCameraViewListener2, View.OnTouchListener, View.OnClickListener{
@@ -36,6 +37,7 @@ public class FirstPicture extends Activity implements CameraBridgeViewBase.CvCam
 
 
     Mat threeChannel;
+    Mat oneChannel;
     Mat fg;
     Mat erodeMask;
     Point erodePoint;
@@ -44,6 +46,11 @@ public class FirstPicture extends Activity implements CameraBridgeViewBase.CvCam
     Mat bg;
 
     Mat markers;
+    int threshold = 10;
+
+    Mat hierarchy;
+
+    int meanArea;
 
 
     static int count;
@@ -51,6 +58,15 @@ public class FirstPicture extends Activity implements CameraBridgeViewBase.CvCam
     boolean firstPicBool;
     boolean onTouchBoolean = true;
 
+
+    double[] times ={1.0,1.1,1.2,1.4,1.6,
+            1.9,2.1,2.4,2.8,3.2,3.6,4.2,4.7,
+            5.4, 6.2,7.0,8.0,9.2,10.4,11.9,
+            13.6,15.5,17.6,20.1,22.9,26.1,29.7,
+            33.9,38.6,44.0,50.2,57.2,65.2,74.3,
+            84.6,96.4,109.9,125.2,142.7,162.6,
+            185.3,211.1,240.5,274.1,312.3,355.9,405.5,
+            462.1,526.5,600};
 
 
     public Mat watershedSegmenter(Mat image, Mat mark){
@@ -65,14 +81,41 @@ public class FirstPicture extends Activity implements CameraBridgeViewBase.CvCam
 
 
     public Mat binarize(Mat image){
-        Imgproc.cvtColor(image, threeChannel, Imgproc.COLOR_RGB2GRAY);
-        Imgproc.threshold(threeChannel, threeChannel, 100, 255, Imgproc.THRESH_BINARY_INV);
-        Imgproc.distanceTransform(threeChannel,image,Imgproc.CV_DIST_L2, Imgproc.CV_DIST_MASK_PRECISE);
-        image.convertTo(image,CvType.CV_8U);
-        Imgproc.threshold(image, image, 10, 255, Imgproc.THRESH_BINARY);
 
-        Imgproc.Canny(image,image,3,3);
-        Log.d("EVENT", "binarize: "+image.channels());
+/*        initialize the contours object
+        and the sum of the areas result*/
+        List<MatOfPoint> contours  = new ArrayList<>();
+        int sum =0;
+
+//        Convert to gray and cut values by thresholding
+        Imgproc.cvtColor(image, threeChannel, Imgproc.COLOR_RGB2GRAY);
+        Imgproc.threshold(threeChannel, threeChannel, 80, 255, Imgproc.THRESH_BINARY_INV);
+
+//        Create a distance matrix to select the foreground and convert to 8 bit grayscale
+        Imgproc.distanceTransform(threeChannel,threeChannel,Imgproc.CV_DIST_L1, Imgproc.CV_DIST_MASK_3);
+        threeChannel.convertTo(oneChannel,CvType.CV_8U);
+//        second thresholding
+        Imgproc.threshold(oneChannel, oneChannel, threshold, 255, Imgproc.THRESH_BINARY);
+//          find contours and store them in contours object, the size should be equal to the number of soil aggregates
+        Imgproc.findContours(oneChannel, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_NONE);
+
+//          Draw contours over the input image and also store the contours in the markers to measure the area (I may erase this part)
+        for (int contourIdx = 0; contourIdx < contours.size(); contourIdx++) {
+            Imgproc.drawContours(image, contours, contourIdx,new Scalar(255,255,255),5);
+            Imgproc.drawContours(markers, contours, contourIdx,new Scalar(255,255,255),5);
+//            get the mean areas by contour
+            Mat contour = contours.get(contourIdx);
+            sum+=Imgproc.contourArea(contour);
+        }
+
+//        workaround if no contours are found
+        if(contours.size()!= 0){
+            meanArea = sum/contours.size();
+        }
+
+//        Log.d("EVENT", "binarize: Mean Area =  " + meanArea);
+
+        Log.d("Event", "binarize: Contours size =  " + contours.size());
 //        Log.d("EVENT", "binarize: "+threeChannel.channels());
 //        Imgproc.erode(threeChannel,fg,erodeMask,erodePoint,2);
 //
@@ -134,8 +177,6 @@ public class FirstPicture extends Activity implements CameraBridgeViewBase.CvCam
     }
 
 
-
-
     public void onDestroy() {
         super.onDestroy();
         if (mOpenCvCameraView != null) {
@@ -151,6 +192,7 @@ public class FirstPicture extends Activity implements CameraBridgeViewBase.CvCam
         mImageW = new Mat(height, width, CvType.CV_8UC3);
 
         threeChannel = new Mat();
+        oneChannel = new Mat();
 
         fg = new Mat(mImage.size(),CvType.CV_32SC1);
         erodeMask = new Mat();
@@ -163,6 +205,7 @@ public class FirstPicture extends Activity implements CameraBridgeViewBase.CvCam
 
         markers = new Mat(mImage.size(), CvType.CV_32SC1,new Scalar(0));
 
+        hierarchy = new Mat();
 
 //
     }
@@ -183,6 +226,7 @@ public class FirstPicture extends Activity implements CameraBridgeViewBase.CvCam
 
         markers.release();
 
+        hierarchy.release();
 
 //        bg.release();
 //
@@ -216,7 +260,6 @@ public class FirstPicture extends Activity implements CameraBridgeViewBase.CvCam
         return false;
     }
 
-
     @Override
     public void onClick(View v) {
 
@@ -235,33 +278,14 @@ public class FirstPicture extends Activity implements CameraBridgeViewBase.CvCam
 
             case R.id.buttonBurstPicture:
 
-                Timer timer = new Timer();
-                timer.schedule(new TimerTask()
-                {
-                    @Override
-                    public void run()
-                    {
-                        bg = binarize(mImage);
-                        file = Environment.getExternalStorageDirectory() + "/Images_Slaker/test"+ String.valueOf(count) + ".png";
-                        count++;
-
-                        firstPicBool=Imgcodecs.imwrite(file,bg);
-
-                        if (firstPicBool) {
-                            Log.i("OpenCv EVENT", "SUCCESS writing image to external storage");
-                        }
-
-                    }
-                }, 0, 1000);
+//              Here i need to implement to run a method over a pre-specified amount of times (in seconds)
 
                 break;
 
             case R.id.buttonWatershed:
-                Mat watershed_mat;
-                watershed_mat=watershedSegmenter(mImage, binarize(mImage));
 
                 file = Environment.getExternalStorageDirectory() + "/Images_Slaker/test.png";
-                onClickbool = Imgcodecs.imwrite(file,watershed_mat);
+                onClickbool = Imgcodecs.imwrite(file,binarize(mImage));
 
                 if (onClickbool) {
                     Log.i("OpenCv EVENT", "SUCCESS writing image to external storage");
