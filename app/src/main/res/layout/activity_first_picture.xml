@@ -38,11 +38,11 @@
                     android:text="@string/buttonBurstPicture" />
 
         <Button
-                    android:id="@+id/buttonWatershed"
+                    android:id="@+id/buttonExportData"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:hint="@string/buttonWatershed"
-                    android:text="@string/buttonWatershed" />
+                    android:hint="@string/buttonExportData"
+                    android:text="@string/buttonExportData" />
 
 
     </LinearLayout>
