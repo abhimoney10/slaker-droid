@@ -1,13 +1,13 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion "23.0.1"
+    compileSdkVersion 24
+    buildToolsVersion "23.0.2"
 
     defaultConfig {
         applicationId "slaker.sydneyuni.au.com.slaker"
-        minSdkVersion 21
-        targetSdkVersion 23
+        minSdkVersion 18
+        targetSdkVersion 24
         versionCode 1
         versionName "1.0"
     }
@@ -27,4 +27,5 @@ dependencies {
     compile 'com.android.support:support-v4:23.4.0'
     compile project(':openCVLibrary310')
     compile files('libs/opencsv-3.8.jar')
+    compile files('libs/commons-math3-3.6.1.jar')
 }

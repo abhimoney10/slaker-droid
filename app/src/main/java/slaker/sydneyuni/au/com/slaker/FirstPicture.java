@@ -12,6 +12,12 @@ import android.widget.Button;
 
 import com.opencsv.CSVWriter;
 
+import org.apache.commons.math3.analysis.ParametricUnivariateFunction;
+import org.apache.commons.math3.fitting.AbstractCurveFitter;
+import org.apache.commons.math3.fitting.WeightedObservedPoint;
+import org.apache.commons.math3.fitting.leastsquares.LeastSquaresBuilder;
+import org.apache.commons.math3.fitting.leastsquares.LeastSquaresProblem;
+import org.apache.commons.math3.linear.DiagonalMatrix;
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.JavaCameraView;
@@ -24,9 +30,12 @@ import org.opencv.core.Scalar;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -39,7 +48,6 @@ public class FirstPicture extends Activity implements CameraBridgeViewBase.CvCam
 
     private JavaCameraView mOpenCvCameraView;
     String file;
-    String filecsv;
 
     Mat mImage;
     Mat mImageB;
@@ -51,17 +59,11 @@ public class FirstPicture extends Activity implements CameraBridgeViewBase.CvCam
     Mat oneChannel;
     Mat fg;
 
-//    int dilation_size = 5;
-//    Mat dilateMask;
-//    Point dilatePoint;
-//    Mat bg;
-
-
     int threshold = 10;
 
     Mat hierarchy;
 
-    int meanArea;
+    double meanArea;
     List<String> areasArray;
 
 
@@ -70,8 +72,9 @@ public class FirstPicture extends Activity implements CameraBridgeViewBase.CvCam
     boolean firstPicBool=true;
     boolean onTouchBoolean = true;
 
-    int[] times ={1,2,3,4};
 
+    WeightedObservedPoint singleObservation;
+    ArrayList<WeightedObservedPoint> observations;
 
 
 
@@ -126,17 +129,86 @@ public class FirstPicture extends Activity implements CameraBridgeViewBase.CvCam
         return image;
     }
 
-//    public int[] fitGompertz(ArrayList areas) {
-//        int[]areasLog = new int[0];
-//        for (int t: this.times) {
-//            Array.set(areasLog,t,areas.get(t));
-//        }
-//        return areasLog;
-//    }
+    class GompertzFunction implements ParametricUnivariateFunction {
+        public double value(double t, double[] parameters) {
+//            return parameters[0] * Math.pow(t, parameters[1]) * Math.exp(-parameters[2] * t);
+              return parameters[0] * (Math.exp(-parameters[1] * Math.exp(-parameters[2] * Math.log(t))));
+        }
+
+        @Override
+        public double[] gradient(double t, double[] parameters) {
+            double a  = parameters[0];
+            double b = parameters[1];
+            double c = parameters[2];
+
+            return new double[]{
+                    a * (Math.exp(-b * Math.exp(-c * Math.log(t)))),
+                    a*b*c*Math.exp(-b * Math.pow(t,-c))*Math.pow(t,-c-1),
+                    a*b*c*(Math.exp(-b*Math.pow(t,-c))*Math.pow(t,-c-2)*(-c-1)+(b*c*Math.exp(-b*Math.pow(t,-c)))*Math.pow(t,-2*c-2))
+
+//                    Math.exp(-c*t) * Math.pow(t, b),
+//                    a * Math.exp(-c*t) * Math.pow(t, b) * Math.log(t),
+//                    a * (-Math.exp(-c*t)) * Math.pow(t, b+1)
+
+            };
+        }
+    }
+
+    public class GompertzFitter extends AbstractCurveFitter {
+        protected LeastSquaresProblem getProblem(Collection<WeightedObservedPoint> points) {
+            final int len = points.size();
+            final double[] target = new double[len];
+            final double[] weights = new double[len];
+            final double[] initialGuess = {1.0, 1.0, 1.0};
+
+            int i = 0;
+            for (WeightedObservedPoint point : points) {
+                target[i] = point.getY();
+                weights[i] = point.getWeight();
+                i += 1;
+            }
+
+            final AbstractCurveFitter.TheoreticalValuesFunction model = new
+                    AbstractCurveFitter.TheoreticalValuesFunction(new GompertzFunction(), points);
+
+            return new LeastSquaresBuilder().
+                    maxEvaluations(Integer.MAX_VALUE).
+                    maxIterations(Integer.MAX_VALUE).
+                    start(initialGuess).
+                    target(target).
+                    weight(new DiagonalMatrix(weights)).
+                    model(model.getModelFunction(), model.getModelFunctionJacobian()).
+                    build();
+        }
+    }
+
+    public WeightedObservedPoint createWeightedPoint(double time,double area){
+        singleObservation = new WeightedObservedPoint(1,time,area);
+
+        return singleObservation;
+    }
+
+    public String fitCurve(ArrayList<WeightedObservedPoint> observations){
+        GompertzFitter fitter = new GompertzFitter();
+//        ArrayList<WeightedObservedPoint> observations = new ArrayList<>();
+
+        WeightedObservedPoint point = new WeightedObservedPoint(1,0,0);
+//
+        observations.add(point);
+
+        final double coeffs[] = fitter.fit(observations);
+
+        return Arrays.toString(coeffs);
+    }
 
     public void exportCsv(List<String> areas) {
 
-        String csv = Environment.getExternalStorageDirectory() + "/Images_Slaker/data.csv";
+        File location = new File(Environment.getExternalStorageDirectory() + "/Slaker/");
+         if(!location.exists()){
+              location.mkdir();
+         }
+
+        String csv = Environment.getExternalStorageDirectory() + "/Slaker/data.csv";
 
         CSVWriter writer = null;
         try {
@@ -151,6 +223,7 @@ public class FirstPicture extends Activity implements CameraBridgeViewBase.CvCam
         } catch (IOException e) {
             e.printStackTrace();
         }
+
     }
 
     private BaseLoaderCallback mLoaderCallBack = new BaseLoaderCallback(this) {
@@ -272,12 +345,23 @@ public class FirstPicture extends Activity implements CameraBridgeViewBase.CvCam
         switch (v.getId()) {
 
             case R.id.buttonSaveImage:
+               String location = Environment.getExternalStorageDirectory() + "/Slaker/test.png";
 
-                file = Environment.getExternalStorageDirectory() + "/Images_Slaker/test.png";
-                onClickbool = Imgcodecs.imwrite(file,mImageB);
+                 File file = new File(location);
 
-                if (onClickbool) {
-                    Log.i("OpenCv EVENT", "SUCCESS writing image to external storage");
+                onClickbool = Imgcodecs.imwrite(location,mImageB);
+
+                if (file.mkdirs()) {
+                    Log.i("OpenCv EVENT", "SUCCESS writing image to external storage" );
+                } else{
+                    onClickbool = Imgcodecs.imwrite(location,mImageB);
+                    if(onClickbool) {
+                        Log.i("OpenCv EVENT", "SUCCESS writing image to external storage" );
+                    } else{
+                        Log.i("OpenCv EVENT", "FAILED writing image to external storage" );
+
+                    }
+
                 }
 
                 break;
@@ -304,10 +388,14 @@ public class FirstPicture extends Activity implements CameraBridgeViewBase.CvCam
                             public void run() {
 
 //
-                                if(count<600){
+                                if(count<60){
                                     Log.d("EVENT", "run:  area is "+ meanArea);
+
+                                    createWeightedPoint(count,meanArea);
                                     areasArray.add(String.valueOf(meanArea));
                                     count+=1;
+                                }else{
+                                    exportCsv(areasArray);
                                 }
 
 
@@ -317,7 +405,7 @@ public class FirstPicture extends Activity implements CameraBridgeViewBase.CvCam
                                 scheduler.scheduleAtFixedRate(beeper, 1,1, SECONDS);
                         scheduler.schedule(new Runnable() {
                             public void run() { beeperHandle.cancel(true); }
-                        }, 60 * 10, SECONDS);
+                        }, 60 * 1, SECONDS);
 
                         firstPicBool=beeperHandle.isDone();
 
@@ -337,16 +425,10 @@ public class FirstPicture extends Activity implements CameraBridgeViewBase.CvCam
 
             case R.id.buttonExportData:
 
-//                file = Environment.getExternalStorageDirectory() + "/Images_Slaker/test.png";
-//                onClickbool = Imgcodecs.imwrite(file, segment(mImage));
-//
-//                if (onClickbool) {
 
-                    exportCsv(areasArray);
+                exportCsv(areasArray);
+                Log.i("OpenCv EVENT", "SUCCESS writing image to external storage" );
 
-                Log.i("OpenCv EVENT", "SUCCESS writing data to external storage");
-
-//                }
 
                 break;
 
