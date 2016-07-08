@@ -36,6 +36,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -59,6 +61,7 @@ public class FirstPicture extends Activity implements CameraBridgeViewBase.CvCam
     Mat oneChannel;
     Mat fg;
 
+    int numAggregates=2;
     int threshold = 10;
 
     Mat hierarchy;
@@ -88,7 +91,7 @@ public class FirstPicture extends Activity implements CameraBridgeViewBase.CvCam
 //      Convert to gray and cut values by thresholding
         Imgproc.cvtColor(image, threeChannel, Imgproc.COLOR_RGB2GRAY);
         Imgproc.cvtColor(image, threeChannelWatershed, Imgproc.COLOR_BGR2RGB);
-        Imgproc.threshold(threeChannel, threeChannel, 80, 255, Imgproc.THRESH_BINARY_INV);
+        Imgproc.threshold(threeChannel, threeChannel, 100, 255, Imgproc.THRESH_BINARY_INV);
 
 //      Create a distance matrix to select the foreground and convert to 8 bit grayscale
         Imgproc.distanceTransform(threeChannel,threeChannel,Imgproc.CV_DIST_L2, Imgproc.CV_DIST_MASK_5);
@@ -97,12 +100,37 @@ public class FirstPicture extends Activity implements CameraBridgeViewBase.CvCam
 //        second thresholding foreground
         Imgproc.threshold(fg, fg, threshold, 255, Imgproc.THRESH_BINARY);
 
-// find contours and store them in contours object, the size should be equal to the number of soil aggregates
+//      find contours and store them in contours object, the size should be equal to the number of soil aggregates
         Imgproc.findContours(fg, contoursFg, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_NONE);
 
 
-//
-// Draw contours over the input image and also store the contours in the markers to measure the area (I may erase this part)
+
+/*      Filter contours in order to select only the number of selected aggregates at the
+        beggining (Assuming that they are the two biggest)
+        objects*/
+
+        class matSorter implements Comparator<MatOfPoint> {
+            @Override
+            public int compare(MatOfPoint a, MatOfPoint b) {
+
+                if (Imgproc.contourArea(a) < Imgproc.contourArea(b)) {
+                    return 1;
+                } else if (Imgproc.contourArea(a) > Imgproc.contourArea(b)) {
+                    return -1;
+                } else {
+                    return 0;
+                }
+            }
+        }
+
+        if(contoursFg.size()>numAggregates) {
+            Collections.sort((ArrayList) contoursFg, new matSorter()); // Sort the arraylist
+
+            contoursFg = (List) contoursFg.subList(0, numAggregates);
+        }
+
+
+//      Draw contours over the input image and also store the contours in the markers to measure the area (I may erase this part)
         for (int contourIdx = 0; contourIdx < contoursFg.size(); contourIdx++) {
 //            foreground markers
             Imgproc.drawContours(image, contoursFg, contourIdx,new Scalar(255,255/(contourIdx+3),255/(contourIdx+3)),2);
@@ -388,7 +416,8 @@ public class FirstPicture extends Activity implements CameraBridgeViewBase.CvCam
                             public void run() {
 
 //
-                                if(count<60){
+                                if(count<600){
+
                                     Log.d("EVENT", "run:  area is "+ meanArea);
 
                                     createWeightedPoint(count,meanArea);
@@ -405,7 +434,7 @@ public class FirstPicture extends Activity implements CameraBridgeViewBase.CvCam
                                 scheduler.scheduleAtFixedRate(beeper, 1,1, SECONDS);
                         scheduler.schedule(new Runnable() {
                             public void run() { beeperHandle.cancel(true); }
-                        }, 60 * 1, SECONDS);
+                        }, 60 * 10, SECONDS);
 
                         firstPicBool=beeperHandle.isDone();
 
@@ -428,6 +457,7 @@ public class FirstPicture extends Activity implements CameraBridgeViewBase.CvCam
 
                 exportCsv(areasArray);
                 Log.i("OpenCv EVENT", "SUCCESS writing image to external storage" );
+
 
 
                 break;
