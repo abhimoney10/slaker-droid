@@ -1,7 +1,9 @@
-package slaker.sydneyuni.au.com.slaker;
+package slaker.sydneyuni.au.com.slaker.activities;
 
 import android.app.Activity;
 import android.os.Bundle;
+
+import slaker.sydneyuni.au.com.slaker.R;
 
 public class InstructionsActivity extends Activity {
     @Override

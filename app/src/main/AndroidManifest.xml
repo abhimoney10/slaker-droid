@@ -15,7 +15,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".SplashScreen"
+            android:name=".activities.SplashScreen"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -23,28 +23,28 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".MainActivity"
+            android:name=".activities.MainActivity"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="slaker.sydneyuni.au.com.slaker.MainActivity" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name=".InstructionsActivity"
-           android:parentActivityName="slaker.sydneyuni.au.com.slaker.MainActivity"
+        <activity android:name=".activities.InstructionsActivity"
+           android:parentActivityName=".activities.MainActivity"
            android:label="@string/buttonInstructions">
            <meta-data
                android:name="android.support.PARENT_ACTIVITY"
-               android:value="slaker.sydneyuni.au.com.slaker.MainActivity">
+               android:value=".activities.MainActivity">
            </meta-data>
         </activity>
-        <activity android:name=".FirstPicture"
-            android:parentActivityName="slaker.sydneyuni.au.com.slaker.MainActivity"
+        <activity android:name=".activities.FirstPicture"
+            android:parentActivityName=".activities.MainActivity"
             android:label="@string/buttonFirstPicture"
             android:screenOrientation="landscape">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="slaker.sydneyuni.au.com.slaker.MainActivity">
+                android:value=".activities.MainActivity">
             </meta-data>
         </activity>
 

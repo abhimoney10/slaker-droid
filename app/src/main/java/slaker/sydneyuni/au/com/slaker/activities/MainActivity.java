@@ -1,4 +1,4 @@
-package slaker.sydneyuni.au.com.slaker;
+package slaker.sydneyuni.au.com.slaker.activities;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+
+import slaker.sydneyuni.au.com.slaker.R;
 
 public class MainActivity extends Activity {
 

@@ -1,8 +1,10 @@
-package slaker.sydneyuni.au.com.slaker;
+package slaker.sydneyuni.au.com.slaker.activities;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+
+import slaker.sydneyuni.au.com.slaker.R;
 
 
 public class SplashScreen extends Activity {
