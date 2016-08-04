@@ -44,7 +44,7 @@ public class FirstPicture extends Activity implements CameraBridgeViewBase.CvCam
     private Segmenter binary;
     private CurveFitter fitter;
 
-    private DataExporter exporter = new DataExporter();
+    private DataExporter exporter;
 
     private JavaCameraView mOpenCvCameraView;
 
@@ -108,6 +108,123 @@ public class FirstPicture extends Activity implements CameraBridgeViewBase.CvCam
         buttonWatershed.setOnClickListener(this);
 
         binary = new Segmenter();
+        areaAggregates = new ArrayList<>();
+        contours = new List<MatOfPoint>() {
+            @Override
+            public int size() {
+                return 0;
+            }
+
+            @Override
+            public boolean isEmpty() {
+                return false;
+            }
+
+            @Override
+            public boolean contains(Object o) {
+                return false;
+            }
+
+            @Override
+            public Iterator<MatOfPoint> iterator() {
+                return null;
+            }
+
+            @Override
+            public Object[] toArray() {
+                return new Object[0];
+            }
+
+            @Override
+            public <T> T[] toArray(T[] ts) {
+                return null;
+            }
+
+            @Override
+            public boolean add(MatOfPoint matOfPoint) {
+                return false;
+            }
+
+            @Override
+            public boolean remove(Object o) {
+                return false;
+            }
+
+            @Override
+            public boolean containsAll(Collection<?> collection) {
+                return false;
+            }
+
+            @Override
+            public boolean addAll(Collection<? extends MatOfPoint> collection) {
+                return false;
+            }
+
+            @Override
+            public boolean addAll(int i, Collection<? extends MatOfPoint> collection) {
+                return false;
+            }
+
+            @Override
+            public boolean removeAll(Collection<?> collection) {
+                return false;
+            }
+
+            @Override
+            public boolean retainAll(Collection<?> collection) {
+                return false;
+            }
+
+            @Override
+            public void clear() {
+
+            }
+
+            @Override
+            public MatOfPoint get(int i) {
+                return null;
+            }
+
+            @Override
+            public MatOfPoint set(int i, MatOfPoint matOfPoint) {
+                return null;
+            }
+
+            @Override
+            public void add(int i, MatOfPoint matOfPoint) {
+
+            }
+
+            @Override
+            public MatOfPoint remove(int i) {
+                return null;
+            }
+
+            @Override
+            public int indexOf(Object o) {
+                return 0;
+            }
+
+            @Override
+            public int lastIndexOf(Object o) {
+                return 0;
+            }
+
+            @Override
+            public ListIterator<MatOfPoint> listIterator() {
+                return null;
+            }
+
+            @Override
+            public ListIterator<MatOfPoint> listIterator(int i) {
+                return null;
+            }
+
+            @Override
+            public List<MatOfPoint> subList(int i, int i1) {
+                return null;
+            }
+        };
 
 
 
@@ -140,6 +257,8 @@ public class FirstPicture extends Activity implements CameraBridgeViewBase.CvCam
 
 
 
+
+
     }
     @Override
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
@@ -149,7 +268,8 @@ public class FirstPicture extends Activity implements CameraBridgeViewBase.CvCam
         if(onTouchBoolean) {
             mImageB = mImage;
         } else{
-            mImageB = binary.drawContours(binary.contourDetection(mImage), mImage);
+            contours = binary.contourDetection(mImage);
+            mImageB = binary.drawContours(contours, mImage);
         }
         return mImageB;
     }
@@ -203,123 +323,9 @@ public class FirstPicture extends Activity implements CameraBridgeViewBase.CvCam
                     count = 1;
                     areasArray = new ArrayList<>();
                     fitter = new CurveFitter();
-                    contours = new List<MatOfPoint>() {
-                        @Override
-                        public int size() {
-                            return 0;
-                        }
-
-                        @Override
-                        public boolean isEmpty() {
-                            return false;
-                        }
-
-                        @Override
-                        public boolean contains(Object o) {
-                            return false;
-                        }
-
-                        @Override
-                        public Iterator<MatOfPoint> iterator() {
-                            return null;
-                        }
-
-                        @Override
-                        public Object[] toArray() {
-                            return new Object[0];
-                        }
-
-                        @Override
-                        public <T> T[] toArray(T[] ts) {
-                            return null;
-                        }
-
-                        @Override
-                        public boolean add(MatOfPoint matOfPoint) {
-                            return false;
-                        }
-
-                        @Override
-                        public boolean remove(Object o) {
-                            return false;
-                        }
-
-                        @Override
-                        public boolean containsAll(Collection<?> collection) {
-                            return false;
-                        }
-
-                        @Override
-                        public boolean addAll(Collection<? extends MatOfPoint> collection) {
-                            return false;
-                        }
-
-                        @Override
-                        public boolean addAll(int i, Collection<? extends MatOfPoint> collection) {
-                            return false;
-                        }
-
-                        @Override
-                        public boolean removeAll(Collection<?> collection) {
-                            return false;
-                        }
-
-                        @Override
-                        public boolean retainAll(Collection<?> collection) {
-                            return false;
-                        }
-
-                        @Override
-                        public void clear() {
-
-                        }
-
-                        @Override
-                        public MatOfPoint get(int i) {
-                            return null;
-                        }
-
-                        @Override
-                        public MatOfPoint set(int i, MatOfPoint matOfPoint) {
-                            return null;
-                        }
-
-                        @Override
-                        public void add(int i, MatOfPoint matOfPoint) {
-
-                        }
-
-                        @Override
-                        public MatOfPoint remove(int i) {
-                            return null;
-                        }
-
-                        @Override
-                        public int indexOf(Object o) {
-                            return 0;
-                        }
-
-                        @Override
-                        public int lastIndexOf(Object o) {
-                            return 0;
-                        }
-
-                        @Override
-                        public ListIterator<MatOfPoint> listIterator() {
-                            return null;
-                        }
-
-                        @Override
-                        public ListIterator<MatOfPoint> listIterator(int i) {
-                            return null;
-                        }
-
-                        @Override
-                        public List<MatOfPoint> subList(int i, int i1) {
-                            return null;
-                        }
-                    };
                     observations = new ArrayList<>();
+
+
 
 
                  class BeeperControl {
@@ -332,22 +338,19 @@ public class FirstPicture extends Activity implements CameraBridgeViewBase.CvCam
 
                                 if(count<360){
                                     slakingIndex=0;
-                                    contours = binary.contourDetection(mImage);
                                     areaAggregates = binary.measureArea(contours);
-
-                                    areasArray.add(String.valueOf(areaAggregates));
-
 
                                     if(count==1){
                                         initialArea = areaAggregates;
                                     }
                                     if(count>1){
                                         for (int aggregateId = 0; aggregateId < contours.size(); aggregateId++) {
-                                        Log.d("EVENT", "run:  area for aggregate "+ aggregateId + "is : " + areaAggregates.get(aggregateId));
+                                            Log.d("EVENT", "run:  area for aggregate "+ aggregateId + "is : " + areaAggregates.get(aggregateId));
                                         slakingIndex+=(areaAggregates.get(aggregateId)-initialArea.get(aggregateId))/initialArea.get(aggregateId);
                                         }
 
                                         slakingIndex =slakingIndex/contours.size();
+                                        Log.d("EVENT", "run:  contour size is "+ contours.size());
                                         Log.d("EVENT", "run:  Slaking index is " + slakingIndex);
                                         observations.add(fitter.createWeightedPoint(count, slakingIndex));
                                         areasArray.add(String.valueOf(slakingIndex));
@@ -356,6 +359,7 @@ public class FirstPicture extends Activity implements CameraBridgeViewBase.CvCam
 
 
                                 }else{
+                                    exporter = new DataExporter();
                                     exporter.exportCsv(areasArray);
                                     Log.d("event", "run: Gompertz coefficients are " + fitter.fitCurve(observations));
 
@@ -366,7 +370,7 @@ public class FirstPicture extends Activity implements CameraBridgeViewBase.CvCam
                                 scheduler.scheduleAtFixedRate(beeper, 1,1, SECONDS);
                         scheduler.schedule(new Runnable() {
                             public void run() { beeperHandle.cancel(true); }
-                        }, 60 * 10, SECONDS);
+                        }, 60 * 6, SECONDS);
 
                         firstPicBool=beeperHandle.isDone();
 
@@ -381,6 +385,7 @@ public class FirstPicture extends Activity implements CameraBridgeViewBase.CvCam
                 break;
 
             case R.id.buttonExportData:
+                exporter = new DataExporter();
                 exporter.exportCsv(areasArray);
                 Log.i("OpenCv EVENT", "SUCCESS writing image to external storage" );
                 break;

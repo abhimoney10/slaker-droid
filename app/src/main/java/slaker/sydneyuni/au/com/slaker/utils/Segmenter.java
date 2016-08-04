@@ -16,11 +16,12 @@ public class Segmenter {
 
     Mat threeChannel;
     Mat fg;
+    Mat hierarchy;
 
-    int numAggregates = 2;
+    int numAggregates = 3;
     int threshold = 10;
 
-    Mat hierarchy;
+
 
     ArrayList<Double> aggregateAreas;
 
@@ -72,12 +73,22 @@ public class Segmenter {
         Imgproc.findContours(fg, contoursFg, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_NONE);
 
         if(contoursFg.size()==0){
+
+            threeChannel.release();
+            fg.release();
+            hierarchy.release();
+
             return contoursFg;
         }else {
             if (contoursFg.size() > numAggregates) {
                 Collections.sort((ArrayList) contoursFg, new matSorter()); // Sort the arraylist
                 contoursFg = contoursFg.subList(0, numAggregates);
             }
+
+            threeChannel.release();
+            fg.release();
+            hierarchy.release();
+
             return contoursFg;
         }
     }
@@ -105,6 +116,8 @@ public class Segmenter {
         }
 
         image.convertTo(image, CvType.CV_8UC1);
+
+
 
         return image;
     }
