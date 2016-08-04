@@ -15,13 +15,14 @@ public class Segmenter {
 
 
     Mat threeChannel;
-    Mat threeChannelWatershed;
     Mat fg;
 
     int numAggregates = 2;
     int threshold = 10;
 
     Mat hierarchy;
+
+    ArrayList<Double> aggregateAreas;
 
 
     public List<MatOfPoint> contourDetection(Mat image) {
@@ -52,16 +53,13 @@ public class Segmenter {
         }
 
         threeChannel = new Mat();
-        threeChannelWatershed = new Mat(image.size(), CvType.CV_8UC2);
         fg = new Mat();
-
         hierarchy = new Mat();
 
         List<MatOfPoint> contoursFg = new ArrayList<>();
 
 
         Imgproc.cvtColor(image, threeChannel, Imgproc.COLOR_RGB2GRAY);
-        Imgproc.cvtColor(image, threeChannelWatershed, Imgproc.COLOR_BGR2RGB);
         Imgproc.threshold(threeChannel, threeChannel, 100, 255, Imgproc.THRESH_BINARY_INV);
 
 
@@ -84,28 +82,22 @@ public class Segmenter {
         }
     }
 
-    public double measureArea(List<MatOfPoint> contours) {
+    public ArrayList<Double> measureArea(List<MatOfPoint> contours) {
 
-        int sum = 0;
+        aggregateAreas = new ArrayList<>();
 
-        if (!contours.isEmpty()){
+        if (!contours.isEmpty()) {
             for (int contourIdx = 0; contourIdx < contours.size(); contourIdx++) {
                 Mat contour = contours.get(contourIdx);
-                sum += Imgproc.contourArea(contour);
+                aggregateAreas.add(Imgproc.contourArea(contour));
             }
-
-            if (contours.size() != 0) {
-                return sum / contours.size();
-            } else {
-                return 0;
-            }
-        }else {
-            return 0;
+            return aggregateAreas;
+        } else{
+            return new ArrayList<>(0);
         }
     }
 
     public Mat drawContours(List<MatOfPoint> contours, Mat image){
-
 
         for (int contourIdx = 0; contourIdx < contours.size(); contourIdx++) {
 //            foreground markers

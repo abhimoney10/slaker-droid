@@ -18,15 +18,20 @@ import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfPoint;
 import org.opencv.imgcodecs.Imgcodecs;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 
+import slaker.sydneyuni.au.com.slaker.CurveFitter;
 import slaker.sydneyuni.au.com.slaker.R;
 import slaker.sydneyuni.au.com.slaker.utils.DataExporter;
 import slaker.sydneyuni.au.com.slaker.utils.Segmenter;
@@ -37,8 +42,9 @@ public class FirstPicture extends Activity implements CameraBridgeViewBase.CvCam
 
 
     private Segmenter binary;
+    private CurveFitter fitter;
 
-    DataExporter exporter = new DataExporter();
+    private DataExporter exporter = new DataExporter();
 
     private JavaCameraView mOpenCvCameraView;
 
@@ -53,6 +59,12 @@ public class FirstPicture extends Activity implements CameraBridgeViewBase.CvCam
 
     public List<String> areasArray;
     public ArrayList<WeightedObservedPoint> observations;
+
+    ArrayList<Double> initialArea;
+    double slakingIndex;
+    ArrayList<Double> areaAggregates;
+
+    private List<MatOfPoint> contours;
 
 
 
@@ -136,7 +148,9 @@ public class FirstPicture extends Activity implements CameraBridgeViewBase.CvCam
 
         if(onTouchBoolean) {
             mImageB = mImage;
-        } else mImageB = binary.drawContours(binary.contourDetection(mImage), mImage);
+        } else{
+            mImageB = binary.drawContours(binary.contourDetection(mImage), mImage);
+        }
         return mImageB;
     }
     @Override
@@ -186,8 +200,127 @@ public class FirstPicture extends Activity implements CameraBridgeViewBase.CvCam
                     onTouchBoolean = false;
                 }
 
-                    count=1;
-                    areasArray= new ArrayList<>();
+                    count = 1;
+                    areasArray = new ArrayList<>();
+                    fitter = new CurveFitter();
+                    contours = new List<MatOfPoint>() {
+                        @Override
+                        public int size() {
+                            return 0;
+                        }
+
+                        @Override
+                        public boolean isEmpty() {
+                            return false;
+                        }
+
+                        @Override
+                        public boolean contains(Object o) {
+                            return false;
+                        }
+
+                        @Override
+                        public Iterator<MatOfPoint> iterator() {
+                            return null;
+                        }
+
+                        @Override
+                        public Object[] toArray() {
+                            return new Object[0];
+                        }
+
+                        @Override
+                        public <T> T[] toArray(T[] ts) {
+                            return null;
+                        }
+
+                        @Override
+                        public boolean add(MatOfPoint matOfPoint) {
+                            return false;
+                        }
+
+                        @Override
+                        public boolean remove(Object o) {
+                            return false;
+                        }
+
+                        @Override
+                        public boolean containsAll(Collection<?> collection) {
+                            return false;
+                        }
+
+                        @Override
+                        public boolean addAll(Collection<? extends MatOfPoint> collection) {
+                            return false;
+                        }
+
+                        @Override
+                        public boolean addAll(int i, Collection<? extends MatOfPoint> collection) {
+                            return false;
+                        }
+
+                        @Override
+                        public boolean removeAll(Collection<?> collection) {
+                            return false;
+                        }
+
+                        @Override
+                        public boolean retainAll(Collection<?> collection) {
+                            return false;
+                        }
+
+                        @Override
+                        public void clear() {
+
+                        }
+
+                        @Override
+                        public MatOfPoint get(int i) {
+                            return null;
+                        }
+
+                        @Override
+                        public MatOfPoint set(int i, MatOfPoint matOfPoint) {
+                            return null;
+                        }
+
+                        @Override
+                        public void add(int i, MatOfPoint matOfPoint) {
+
+                        }
+
+                        @Override
+                        public MatOfPoint remove(int i) {
+                            return null;
+                        }
+
+                        @Override
+                        public int indexOf(Object o) {
+                            return 0;
+                        }
+
+                        @Override
+                        public int lastIndexOf(Object o) {
+                            return 0;
+                        }
+
+                        @Override
+                        public ListIterator<MatOfPoint> listIterator() {
+                            return null;
+                        }
+
+                        @Override
+                        public ListIterator<MatOfPoint> listIterator(int i) {
+                            return null;
+                        }
+
+                        @Override
+                        public List<MatOfPoint> subList(int i, int i1) {
+                            return null;
+                        }
+                    };
+                    observations = new ArrayList<>();
+
 
                  class BeeperControl {
                     private final ScheduledExecutorService scheduler =
@@ -197,19 +330,36 @@ public class FirstPicture extends Activity implements CameraBridgeViewBase.CvCam
                         final Runnable beeper = new Runnable() {
                             public void run() {
 
-                                if(count<600){
+                                if(count<360){
+                                    slakingIndex=0;
+                                    contours = binary.contourDetection(mImage);
+                                    areaAggregates = binary.measureArea(contours);
 
-                                    Log.d("EVENT", "run:  area is "+ binary.measureArea(binary.contourDetection(mImage)));
+                                    areasArray.add(String.valueOf(areaAggregates));
 
-                                    areasArray.add(String.valueOf(binary.measureArea(binary.contourDetection(mImage))));
+
+                                    if(count==1){
+                                        initialArea = areaAggregates;
+                                    }
+                                    if(count>1){
+                                        for (int aggregateId = 0; aggregateId < contours.size(); aggregateId++) {
+                                        Log.d("EVENT", "run:  area for aggregate "+ aggregateId + "is : " + areaAggregates.get(aggregateId));
+                                        slakingIndex+=(areaAggregates.get(aggregateId)-initialArea.get(aggregateId))/initialArea.get(aggregateId);
+                                        }
+
+                                        slakingIndex =slakingIndex/contours.size();
+                                        Log.d("EVENT", "run:  Slaking index is " + slakingIndex);
+                                        observations.add(fitter.createWeightedPoint(count, slakingIndex));
+                                        areasArray.add(String.valueOf(slakingIndex));
+                                    }
                                     count+=1;
+
+
                                 }else{
-
-                                    exporter = new DataExporter();
                                     exporter.exportCsv(areasArray);
+                                    Log.d("event", "run: Gompertz coefficients are " + fitter.fitCurve(observations));
+
                                 }
-
-
                             }
                         };
                          final ScheduledFuture<?> beeperHandle =
