@@ -1,50 +1,19 @@
-package slaker.sydneyuni.au.com.slaker;
-
-import android.app.Activity;
-import android.os.Bundle;
-import android.os.Environment;
-import android.util.Log;
-import android.view.MotionEvent;
-import android.view.SurfaceView;
-import android.view.View;
-import android.view.WindowManager;
-import android.widget.Button;
-
-import com.opencsv.CSVWriter;
+package slaker.sydneyuni.au.com.slaker.utils;
 
 import org.apache.commons.math3.analysis.ParametricUnivariateFunction;
 import org.apache.commons.math3.fitting.AbstractCurveFitter;
-import org.apache.commons.math3.fitting.PolynomialCurveFitter;
 import org.apache.commons.math3.fitting.WeightedObservedPoint;
 import org.apache.commons.math3.fitting.leastsquares.LeastSquaresBuilder;
 import org.apache.commons.math3.fitting.leastsquares.LeastSquaresProblem;
 import org.apache.commons.math3.linear.DiagonalMatrix;
-import org.opencv.android.BaseLoaderCallback;
-import org.opencv.android.CameraBridgeViewBase;
-import org.opencv.android.JavaCameraView;
-import org.opencv.android.LoaderCallbackInterface;
-import org.opencv.android.OpenCVLoader;
-import org.opencv.core.CvType;
-import org.opencv.core.Mat;
-import org.opencv.core.MatOfPoint;
-import org.opencv.core.Scalar;
-import org.opencv.imgcodecs.Imgcodecs;
-import org.opencv.imgproc.Imgproc;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
+
+import slaker.sydneyuni.au.com.slaker.activities.ExperimentActivity;
 
 public class CurveFitter {
+
 
 
     class GompertzFunction implements ParametricUnivariateFunction {
@@ -67,7 +36,7 @@ public class CurveFitter {
              * @author Mario Fajardo
              * @param t the independent variable, in this case the time.
              * @param parameters the coefficients to be optimized for the gompertz function.
-             * @return an array of doubles which contain the first, second and third derivatives of the gompertz function.
+             * @return an array of doubles which contain the partial derivatives of the gompertz function parameters.
              */
 
             double a = parameters[0];
@@ -79,27 +48,13 @@ public class CurveFitter {
                     //function
                     /*a * (Math.exp(-b * Math.exp(-c * Math.log(t)))),*/
 
-                    //first derivative
-                    a * b * c * Math.exp(-b * Math.pow(t, -c)) * Math.pow(t, -c - 1),
-
-                    // second derivative
-                    a * b * c * (Math.exp(-b * Math.pow(t, -c)) * Math.pow(t, -c - 2) * (-c - 1) + (b * c * Math.exp(-b * Math.pow(t, -c))) * Math.pow(t, -2 * c - 2))
-                    ,
-
-                    // third derivative
-                    -a * b * c * (Math.pow(b, 2) * Math.pow(c, 2) * Math.exp(-b * Math.pow(t, c)) * Math.pow(t, (3 * c) - 3) +
-                            3 * b * c * Math.exp(-b * Math.pow(t, c)) * Math.pow(t, (2 * c) - 3) +
-                            Math.pow(c, 2) * Math.exp(-b * Math.pow(t, c)) * Math.pow(t, c - 3) +
-                            2 * Math.exp(-b * Math.pow(t, c)) * Math.pow(t, c - 3) -
-                            3 * c * Math.exp(-b * Math.pow(t, c)) * Math.pow(t, c - 3) -
-                            3 * b * Math.pow(c, 2) * Math.exp(-b * Math.pow(t, c)) * Math.pow(t, (2 * c) - 3))
-//
-//
-//
-//                    Math.exp(-c*t) * Math.pow(t, b),
-//                    a * Math.exp(-c*t) * Math.pow(t, b) * Math.log(t),
-//                    a * (-Math.exp(-c*t)) * Math.pow(t, b+1)
-
+                    //Calculate the Jacobian
+                    //Partial derivative to coef a
+                    Math.exp(-b*Math.pow(t,-c)),
+                    //Partial derivative to coef b,
+                    -a*Math.exp(-b*Math.pow(t,-c))*(Math.pow(t,-c)),
+                    //Partial derivative to coef c
+                    a*Math.exp(-b*Math.pow(t,-c))*(b*Math.pow(t,-c))*Math.log(t)
             };
         }
     }
@@ -109,14 +64,14 @@ public class CurveFitter {
 
             /**
              * @author Mario Fajardo
-             * @param points a collection ob observations obtained by createWeightedPoint method
+             * @param points a collection of observations obtained by createWeightedPoint method
              * @return a LeastSquaresProblem class for solving a GompertzFunction class.
              */
 
             final int len = points.size();
             final double[] target = new double[len];
             final double[] weights = new double[len];
-            final double[] initialGuess = {1, 1.15, 1.0};
+            final double[] initialGuess = {ExperimentActivity.initialCoefA, 10, 1.5};
 
             int i = 0;
             for (WeightedObservedPoint point : points) {
@@ -147,16 +102,16 @@ public class CurveFitter {
          * @param area a double specifying the area of the soil aggregate at time t.
          * @return a weighted point to be used by GompertzFitter.getProblem
          */
-        WeightedObservedPoint singleObservation = new WeightedObservedPoint(1, time, area);
 
-        return singleObservation;
+        return new WeightedObservedPoint(1, time, area);
     }
 
-    public String fitCurve(ArrayList<WeightedObservedPoint> observations) {
+    public double[] fitCurve(ArrayList<WeightedObservedPoint> observations) {
+
         /**
          * @author Mario Fajardo
          * @param observations an array of WeightedObservations created by createWeightedPoint method.
-         * @return a String value of the resulting coefficients fitted to the G`ompertz function.
+         * @return a String value of the resulting coefficients fitted to the Gompertz function.
          */
         GompertzFitter fitter = new GompertzFitter();
 //        ArrayList<WeightedObservedPoint> observations = new ArrayList<>();
@@ -165,10 +120,9 @@ public class CurveFitter {
 //
         observations.add(point);*/
 
-        final double coeffs[] = fitter.fit(observations);
-
-        return Arrays.toString(coeffs);
+        return fitter.fit(observations);
     }
+
 
 }
 

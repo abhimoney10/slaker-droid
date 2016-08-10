@@ -38,7 +38,7 @@
                android:value=".activities.MainActivity">
            </meta-data>
         </activity>
-        <activity android:name=".activities.FirstPicture"
+        <activity android:name=".activities.ExperimentActivity"
             android:parentActivityName=".activities.MainActivity"
             android:label="@string/buttonFirstPicture"
             android:screenOrientation="landscape">

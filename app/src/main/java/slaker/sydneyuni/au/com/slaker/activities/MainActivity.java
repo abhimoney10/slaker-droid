@@ -47,7 +47,7 @@ public class MainActivity extends Activity {
     }
 
     public void startFirstPicture(View view) {
-        Intent intent = new Intent(this, FirstPicture.class);
+        Intent intent = new Intent(this, ExperimentActivity.class);
         startActivity(intent);
     }
 
