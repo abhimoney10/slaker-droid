@@ -1,6 +1,7 @@
 package slaker.sydneyuni.au.com.slaker.activities;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -72,12 +73,14 @@ public class ExperimentActivity extends Activity implements CameraBridgeViewBase
     private String coefC;
     public static double initialCoefA;
 
-    private Integer[] logSeq = new Integer[]{1,2,3,4,5,6,7,8,9,10,
+    private Integer[] logSeq = new Integer[]{
+            1,2,3,4,5,6,7,8,9,10,
             11,12,13,14,15,16,17,18,19,
             20,21,22,23,24,25,26,27,28,29,30,
             32,34,36,38,40,42,44,46,48,50,
             54,58,62,66,70,78,86,110,150,
-            210,280,380,480,600};
+            210,280,380,480,600
+    };
 
 
 
@@ -95,6 +98,10 @@ public class ExperimentActivity extends Activity implements CameraBridgeViewBase
         }
     }
 
+    public final static String COEF_A = "com.slaker.utils.COEF_A";
+    public final static String COEF_B = "com.slaker.utils.COEF_B";
+    public final static String COEF_C = "com.slaker.utils.COEF_C";
+
     private BaseLoaderCallback mLoaderCallBack = new BaseLoaderCallback(this) {
         @Override
         public void onManagerConnected(int status) {
@@ -110,6 +117,14 @@ public class ExperimentActivity extends Activity implements CameraBridgeViewBase
             }
         }
     };
+
+    public void sendResult() {
+        Intent intentResultActivity = new Intent(this, ResultsActivity.class);
+        intentResultActivity.putExtra(COEF_A, coefA);
+        intentResultActivity.putExtra(COEF_B, coefB);
+        intentResultActivity.putExtra(COEF_C, coefC);
+        startActivity(intentResultActivity);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -139,6 +154,8 @@ public class ExperimentActivity extends Activity implements CameraBridgeViewBase
         binary = new Segmenter();
         areaAggregates = new ArrayList<>();
         contours = new ArrayList<>();
+
+
     }
 
     public void onResume() {
@@ -304,7 +321,6 @@ public class ExperimentActivity extends Activity implements CameraBridgeViewBase
 
                                 }else{
 
-
                                     exporter = new DataExporter();
                                     exporter.exportCsv(areasArray);
                                     SLAKING_RESULT = fitter.fitCurve(observations);
@@ -316,6 +332,7 @@ public class ExperimentActivity extends Activity implements CameraBridgeViewBase
                                     Log.d("event", "run: Gompertz coefficient A is: " + coefA);
                                     Log.d("event", "run: Gompertz coefficient B is: " + coefB);
                                     Log.d("event", "run: Gompertz coefficient C is: " + coefC);
+                                    sendResult();
 
                                 }
                             }
@@ -346,10 +363,6 @@ public class ExperimentActivity extends Activity implements CameraBridgeViewBase
 
         }
     }
-
-
-
-
 
 }
 

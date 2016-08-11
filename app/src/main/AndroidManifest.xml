@@ -2,12 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="slaker.sydneyuni.au.com.slaker">
 
-
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-feature android:name="android.hardware.camera" />
-    <uses-feature android:name="android.hardware.camera.autofocus" />
 
+    <uses-feature android:name="android.hardware.camera" />
+    <uses-feature android:name="android.hardware.camera.autofocus"/>
 
     <application
         android:allowBackup="true"
@@ -19,9 +18,11 @@
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".activities.MainActivity"
             android:label="@string/app_name">
@@ -30,21 +31,52 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.InstructionsActivity"
-           android:parentActivityName=".activities.MainActivity"
-           android:label="@string/buttonInstructions">
-           <meta-data
-               android:name="android.support.PARENT_ACTIVITY"
-               android:value=".activities.MainActivity">
-           </meta-data>
-        </activity>
-        <activity android:name=".activities.ExperimentActivity"
-            android:parentActivityName=".activities.MainActivity"
-            android:label="@string/buttonFirstPicture"
-            android:screenOrientation="landscape">
+
+        <activity
+            android:name=".activities.InstructionsActivity"
+            android:label="@string/buttonInstructions"
+            android:parentActivityName=".activities.MainActivity">
+
+            <intent-filter>
+                <action android:name="slaker.sydneyuni.au.com.slaker.InstructionsActivity" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.MainActivity">
+            </meta-data>
+        </activity>
+
+        <activity
+            android:name=".activities.ExperimentActivity"
+            android:label="@string/buttonFirstPicture"
+            android:parentActivityName=".activities.MainActivity"
+            android:screenOrientation="landscape">
+
+            <intent-filter>
+                <action android:name="slaker.sydneyuni.au.com.slaker.ExperimentActivity" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activities.MainActivity">
+            </meta-data>
+        </activity>
+
+        <activity
+            android:name=".activities.ResultsActivity"
+            android:parentActivityName=".activities.ExperimentActivity">
+
+            <intent-filter>
+                <action android:name="slaker.sydneyuni.au.com.slaker.ResultsActivity" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activities.ExperimentActivity">
             </meta-data>
         </activity>
 
