@@ -1,40 +1,41 @@
 package slaker.sydneyuni.au.com.slaker.activities;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.view.ViewGroup;
 import android.widget.TextView;
 
 import slaker.sydneyuni.au.com.slaker.R;
 
-public class ResultsActivity extends AppCompatActivity {
+public class ResultsActivity extends Activity {
+    TextView resultCoefAtextView;
+    TextView resultCoefBtextView;
+    TextView resultCoefCtextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
-        super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_results);
+        super.onCreate(savedInstanceState);
 
         Intent intent = getIntent();
-        String resultCoefA = intent.getStringExtra(ExperimentActivity.COEF_A);
-        String resultCoefB = intent.getStringExtra(ExperimentActivity.COEF_B);
-        String resultCoefC = intent.getStringExtra(ExperimentActivity.COEF_C);
 
-        TextView resultCoefAtextView = new TextView(this);
+        String coefA =intent.getStringExtra(ExperimentActivity.COEF_A);
+        resultCoefAtextView = (TextView) findViewById(R.id.activity_message_CoefA);
         resultCoefAtextView.setTextSize(40);
-        resultCoefAtextView.setText(resultCoefA);
+        resultCoefAtextView.setText("Coefficient A is " + coefA);
 
-        TextView resultCoefBtextView = new TextView(this);
+
+        String coefB =intent.getStringExtra(ExperimentActivity.COEF_B);
+        resultCoefBtextView = (TextView) findViewById(R.id.activity_message_CoefB);
         resultCoefBtextView.setTextSize(40);
-        resultCoefBtextView.setText(resultCoefB);
+        resultCoefBtextView.setText("Coefficient B is " + coefB);
 
-        TextView resultCoefCtextView = new TextView(this);
+        String coefC =intent.getStringExtra(ExperimentActivity.COEF_C);
+        resultCoefCtextView = (TextView) findViewById(R.id.activity_message_CoefC);
         resultCoefCtextView.setTextSize(40);
-        resultCoefCtextView.setText(resultCoefC);
+        resultCoefCtextView.setText("Coefficient C is " + coefC);
 
-        ViewGroup layout = (ViewGroup) findViewById(R.id.activity_results_messagges);
-        layout.addView(resultCoefAtextView);
+
     }
 
 }

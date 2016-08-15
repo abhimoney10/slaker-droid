@@ -12,6 +12,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 
 import org.apache.commons.math3.fitting.WeightedObservedPoint;
+import org.apache.commons.math3.util.Precision;
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.JavaCameraView;
@@ -43,6 +44,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 
 public class ExperimentActivity extends Activity implements CameraBridgeViewBase.CvCameraViewListener2, View.OnTouchListener, View.OnClickListener{
 
+    private String experimentName= "Testing";
 
     private Segmenter binary;
     private CurveFitter fitter;
@@ -322,12 +324,12 @@ public class ExperimentActivity extends Activity implements CameraBridgeViewBase
                                 }else{
 
                                     exporter = new DataExporter();
-                                    exporter.exportCsv(areasArray);
+                                    exporter.exportCsv(areasArray,experimentName);
                                     SLAKING_RESULT = fitter.fitCurve(observations);
 
-                                    coefA=String.valueOf(Array.get(SLAKING_RESULT,0));
-                                    coefB=String.valueOf(Array.get(SLAKING_RESULT,1));
-                                    coefC=String.valueOf(Array.get(SLAKING_RESULT,2));
+                                    coefA=String.valueOf(Precision.round((double)Array.get(SLAKING_RESULT,0),1));
+                                    coefB=String.valueOf(Precision.round((double)Array.get(SLAKING_RESULT,1),1));
+                                    coefC=String.valueOf(Precision.round((double)Array.get(SLAKING_RESULT,2),1));
 
                                     Log.d("event", "run: Gompertz coefficient A is: " + coefA);
                                     Log.d("event", "run: Gompertz coefficient B is: " + coefB);
@@ -357,7 +359,7 @@ public class ExperimentActivity extends Activity implements CameraBridgeViewBase
 
             case R.id.buttonExportData:
                 exporter = new DataExporter();
-                exporter.exportCsv(areasArray);
+                exporter.exportCsv(areasArray,experimentName);
                 Log.i("OpenCv EVENT", "SUCCESS writing image to external storage" );
                 break;
 

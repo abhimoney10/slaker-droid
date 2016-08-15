@@ -11,14 +11,14 @@ import java.util.List;
 
 
 public class DataExporter {
-    public void exportCsv(List<String> areas) {
+    public void exportCsv(List<String> areas, String experimentName) {
 
-        File location = new File(Environment.getExternalStorageDirectory() + "/Slaker/");
+        File location = new File(Environment.getExternalStorageDirectory() + "/Slakes/");
         if(!location.exists()){
             location.mkdir();
         }
 
-        String csv = Environment.getExternalStorageDirectory() + "/Slaker/data.csv";
+        String csv = Environment.getExternalStorageDirectory() + "/Slakes/data_"+ experimentName + ".csv";
 
         CSVWriter writer = null;
         try {
