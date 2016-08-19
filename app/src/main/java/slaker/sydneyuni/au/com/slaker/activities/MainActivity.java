@@ -28,7 +28,7 @@ public class MainActivity extends Activity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
+        // Handle action bar activity_item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
@@ -46,8 +46,8 @@ public class MainActivity extends Activity {
         startActivity(intent);
     }
 
-    public void startFirstPicture(View view) {
-        Intent intent = new Intent(this, ExperimentActivity.class);
+    public void startUserActivity(View view) {
+        Intent intent = new Intent(this, UserActivity.class);
         startActivity(intent);
     }
 

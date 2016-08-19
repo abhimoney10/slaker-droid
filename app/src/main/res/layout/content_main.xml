@@ -16,6 +16,6 @@
         android:id="@+id/buttonFirstPicture"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="startFirstPicture"
-        android:hint="@string/buttonFirstPicture"/>
+        android:onClick="startUserActivity"
+        android:hint="@string/buttonUserDetails"/>
 </LinearLayout>

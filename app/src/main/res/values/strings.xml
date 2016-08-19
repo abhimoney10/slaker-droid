@@ -2,9 +2,13 @@
     <string name="app_name">Slaker</string>
     <string name="action_settings">Settings</string>
     <string name="buttonInstructions">Instructions</string>
+    <string name="buttonUserDetails">Start Experiment</string>
     <string name="buttonFirstPicture">Take the first picture</string>
     <string name="instructions">instructions</string>
     <string name="buttonSaveImage">Save Image</string>
     <string name="buttonBurstPicture">Start</string>
     <string name="buttonExportData">Export Data</string>
+    <string name="numAggregates">Specify the number of soil aggregates</string>
+    <string name="projectName">Specify the name of your project</string>
+    <string name="nextInstructions">next</string>
 </resources>

@@ -13,20 +13,17 @@ import java.util.List;
 
 public class Segmenter {
 
-
     Mat threeChannel;
     Mat fg;
     Mat hierarchy;
-
-    int numAggregates = 3;
-    int threshold = 10;
+    int threshold = 5;
 
 
 
     ArrayList<Double> aggregateAreas;
 
 
-    public List<MatOfPoint> contourDetection(Mat image) {
+    public List<MatOfPoint> contourDetection(Mat image,Integer numAggregates) {
 
 /*      Initialize the contours object
         and the sum of the areas result
@@ -61,7 +58,7 @@ public class Segmenter {
 
 
         Imgproc.cvtColor(image, threeChannel, Imgproc.COLOR_RGB2GRAY);
-        Imgproc.threshold(threeChannel, threeChannel, 100, 255, Imgproc.THRESH_BINARY_INV);
+        Imgproc.threshold(threeChannel, threeChannel, 80, 255, Imgproc.THRESH_BINARY_INV);
 
 
         Imgproc.distanceTransform(threeChannel, threeChannel, Imgproc.CV_DIST_L2, Imgproc.CV_DIST_MASK_5);

@@ -3,7 +3,6 @@ package slaker.sydneyuni.au.com.slaker.activities;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Environment;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
@@ -21,10 +20,8 @@ import org.opencv.android.OpenCVLoader;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
-import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 
-import java.io.File;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -44,7 +41,8 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 
 public class ExperimentActivity extends Activity implements CameraBridgeViewBase.CvCameraViewListener2, View.OnTouchListener, View.OnClickListener{
 
-    private String experimentName= "Testing";
+    String projectName;
+    String numAggregates;
 
     private Segmenter binary;
     private CurveFitter fitter;
@@ -56,7 +54,6 @@ public class ExperimentActivity extends Activity implements CameraBridgeViewBase
     private Mat mImageB;
 
     public static int count;
-    public boolean onClickbool;
     public boolean firstPicBool;
     public boolean onTouchBoolean = true;
 
@@ -140,18 +137,16 @@ public class ExperimentActivity extends Activity implements CameraBridgeViewBase
         mOpenCvCameraView.setOnTouchListener(this);
 
 
+        Intent intent = getIntent();
+        numAggregates = intent.getStringExtra(UserActivity.messageAggregates);
+        projectName = intent.getStringExtra(UserActivity.messageprojectName);
 
-        Button saveImage = (Button) findViewById(R.id.buttonSaveImage);
-        saveImage.setOnClickListener(this);
 
         Button startExperiment = (Button) findViewById(R.id.buttonBurstPicture);
         startExperiment.setOnClickListener(this);
 
         Button firstPicture = (Button) findViewById(R.id.buttonFirstPicture);
         firstPicture.setOnClickListener(this);
-
-        Button buttonWatershed = (Button) findViewById(R.id.buttonExportData);
-        buttonWatershed.setOnClickListener(this);
 
         binary = new Segmenter();
         areaAggregates = new ArrayList<>();
@@ -198,7 +193,7 @@ public class ExperimentActivity extends Activity implements CameraBridgeViewBase
         if(onTouchBoolean) {
             mImageB = mImage;
         } else{
-            contours = binary.contourDetection(mImage);
+            contours = binary.contourDetection(mImage,Integer.valueOf(numAggregates));
             //sort areas of objects
 
             Collections.sort(contours, new matSorter());
@@ -220,29 +215,6 @@ public class ExperimentActivity extends Activity implements CameraBridgeViewBase
     public void onClick(View v) {
 
         switch (v.getId()) {
-
-            case R.id.buttonSaveImage:
-                String location = Environment.getExternalStorageDirectory() + "/Slaker/test.png";
-
-                File file = new File(location);
-
-                onClickbool = Imgcodecs.imwrite(location, mImageB);
-
-                if (file.mkdirs()) {
-                    Log.i("OpenCv EVENT", "SUCCESS writing image to external storage");
-
-                } else {
-                    onClickbool = Imgcodecs.imwrite(location, mImageB);
-                    if (onClickbool) {
-                        Log.i("OpenCv EVENT", "SUCCESS writing image to external storage");
-                    } else {
-                        Log.i("OpenCv EVENT", "FAILED writing image to external storage");
-
-                    }
-
-                }
-
-                break;
 
             case R.id.buttonFirstPicture:
 
@@ -324,7 +296,7 @@ public class ExperimentActivity extends Activity implements CameraBridgeViewBase
                                 }else{
 
                                     exporter = new DataExporter();
-                                    exporter.exportCsv(areasArray,experimentName);
+                                    exporter.exportCsv(areasArray,projectName);
                                     SLAKING_RESULT = fitter.fitCurve(observations);
 
                                     coefA=String.valueOf(Precision.round((double)Array.get(SLAKING_RESULT,0),1));
@@ -357,11 +329,6 @@ public class ExperimentActivity extends Activity implements CameraBridgeViewBase
 
                 break;
 
-            case R.id.buttonExportData:
-                exporter = new DataExporter();
-                exporter.exportCsv(areasArray,experimentName);
-                Log.i("OpenCv EVENT", "SUCCESS writing image to external storage" );
-                break;
 
         }
     }

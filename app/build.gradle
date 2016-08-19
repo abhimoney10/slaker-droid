@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "slaker.sydneyuni.au.com.slaker"
-        minSdkVersion 18
+        minSdkVersion 17
         targetSdkVersion 24
         versionCode 1
         versionName "1.0"
