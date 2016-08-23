@@ -97,6 +97,8 @@ public class ExperimentActivity extends Activity implements CameraBridgeViewBase
         }
     }
 
+
+
     public final static String COEF_A = "com.slaker.utils.COEF_A";
     public final static String COEF_B = "com.slaker.utils.COEF_B";
     public final static String COEF_C = "com.slaker.utils.COEF_C";

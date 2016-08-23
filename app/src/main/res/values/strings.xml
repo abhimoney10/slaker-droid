@@ -11,4 +11,5 @@
     <string name="numAggregates">Specify the number of soil aggregates</string>
     <string name="projectName">Specify the name of your project</string>
     <string name="nextInstructions">next</string>
+    <string name="howTo">How to use</string>
 </resources>

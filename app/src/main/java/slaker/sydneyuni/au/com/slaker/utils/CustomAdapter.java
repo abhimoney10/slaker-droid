@@ -12,11 +12,35 @@ import slaker.sydneyuni.au.com.slaker.R;
 
 public class CustomAdapter extends BaseAdapter{
 
-    private Context c;
+    public Context c;
 
-    public String[] names={"1","2"};
-    public String[] details={"inst 1"," inst 2"};
-    public int[]    images={R.drawable.inst1,R.drawable.inst2};
+    public String[] names =
+            {
+                    "About this app",
+                    "Preparing your samples",
+                    "Setting your experiment details",
+                    "Image recognition",
+                    "Time of the experiment",
+                    "Results"
+
+
+
+            };
+    public String[] details=
+            {
+                    "Slakes is the mobile version of the algorithm written by Fajardo et.al",
+                    "Make sure the soil samples are air dried for at least 24 hours",
+                    "Select the number of soil aggregates to be used as well as the name of your project. The app will save the results of the slaking process on a csv file with that name",
+                    "The image recognition algorithm is implemented with the Java library OpenCV, and it measures independently each of the soil samples every second, storing them for later fitting of the slaking model",
+                    "The experiment need a minimum of 10 minutes to finalize. Since the results are directly related with the image segmentation, make sure that your phone position and the light conditions are stable",
+                    "The results are expressed as a Slaking index coefficient, where …"
+
+
+
+            };
+    public int[] imageSmall ={R.drawable.inst1,R.drawable.inst2,R.drawable.inst3,R.drawable.inst4,R.drawable.inst5,R.drawable.inst6};
+    public int[] imageBig ={R.drawable.inst3,R.drawable.inst3,R.drawable.inst3,R.drawable.inst3,R.drawable.inst3,R.drawable.inst3};
+
 
     public CustomAdapter(Context ctx){
         this.c=ctx;
@@ -46,14 +70,12 @@ public class CustomAdapter extends BaseAdapter{
 
         //GET VIEWS
         TextView nameTxt = (TextView) convertView.findViewById(R.id.nameItem);
-        TextView detailsTxt = (TextView) convertView.findViewById(R.id.detailsItem);
         ImageView img = (ImageView) convertView.findViewById(R.id.imageItem);
 
         //SET DATA
 
         nameTxt.setText(names[pos]);
-        detailsTxt.setText(details[pos]);
-        img.setImageResource(images[pos]);
+        img.setImageResource(imageSmall[pos]);
         return convertView;
     }
 }

@@ -3,17 +3,26 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
     tools:context=".activities.InstructionsActivity"
     android:weightSum="1">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="130dp"
+        android:text="@string/howTo"
+        android:textSize="40sp"
+        android:id="@+id/textView"
+        android:layout_gravity="center"
+        android:enabled="false"
+        android:gravity="center_vertical" />
 
     <ListView
         android:id="@+id/instructions"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_gravity="center_horizontal"
-        android:layout_weight="0.06"/>
+        android:layout_height="0dp"
+        android:layout_weight="0.95" />
 
 
 </LinearLayout>

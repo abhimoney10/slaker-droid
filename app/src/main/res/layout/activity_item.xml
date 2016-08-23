@@ -9,16 +9,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Name"
+        android:layout_marginStart="34dp"
         android:layout_alignParentTop="true"
-        android:layout_toEndOf="@+id/imageItem"
-        android:layout_marginStart="23dp" />
-    <TextView
-        android:id="@+id/detailsItem"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Details"
-        android:layout_alignBottom="@+id/imageItem"
-        android:layout_alignStart="@+id/nameItem" />
+        android:layout_toEndOf="@+id/imageItem" />
+
     <ImageView
         android:id="@+id/imageItem"
         android:layout_width="65dp"

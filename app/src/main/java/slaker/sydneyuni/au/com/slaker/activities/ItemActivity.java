@@ -33,7 +33,7 @@ public class ItemActivity extends AppCompatActivity {
 
         //SET DATA
 
-        img.setImageResource(adapter.images[pos]);
+        img.setImageResource(adapter.imageBig[pos]);
         details.setText(adapter.details[pos]);
         name.setText(adapter.names[pos]);
 
@@ -48,7 +48,7 @@ public class ItemActivity extends AppCompatActivity {
                     position = pos;
                 }
 
-                img.setImageResource(adapter.images[position]);
+                img.setImageResource(adapter.imageBig[position]);
                 details.setText("Name: " + adapter.details[position]);
                 name.setText(adapter.names[position]);
 

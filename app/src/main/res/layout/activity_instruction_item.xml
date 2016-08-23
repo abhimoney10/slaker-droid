@@ -13,20 +13,21 @@
         android:id="@+id/nextInstructions"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignEnd="@+id/InstImage" />
+        android:layout_alignBottom="@+id/InstText"
+        android:layout_alignParentEnd="true" />
 
     <ImageView
         android:id="@+id/InstImage"
-        android:layout_width="500dp"
-        android:layout_height="500dp"
+        android:layout_width="250dp"
+        android:layout_height="250dp"
         android:src="@drawable/splash_image"
-        android:layout_alignParentTop="true" />
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
     <TextView
         android:id="@+id/InstDetails"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="40dp"
+        android:textSize="20sp"
         android:text="details"
         android:layout_below="@+id/InstImage"
         android:layout_alignParentStart="true" />
