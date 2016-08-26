@@ -11,8 +11,8 @@ import slaker.sydneyuni.au.com.slaker.R;
 public class UserActivity extends AppCompatActivity {
 
 
-    public final static String messageAggregates= "com.slaker.utils.numAggregates";
-    public final static String messageprojectName= "com.slaker.utils.projectName";
+    public final static String messageAggregates= "1";
+    public final static String messageprojectName= "EmptyProject";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,9 +28,13 @@ public class UserActivity extends AppCompatActivity {
         String numAggregates = editText1.getText().toString();
         intent.putExtra(messageAggregates, numAggregates);
 
+
+
         EditText editText2 = (EditText) findViewById(R.id.projectName);
         String projectName = editText2.getText().toString();
         intent.putExtra(messageprojectName, projectName);
+
+
 
         startActivity(intent);
     }

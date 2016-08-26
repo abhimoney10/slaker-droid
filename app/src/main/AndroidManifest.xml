@@ -74,7 +74,12 @@
                 android:value=".activities.ExperimentActivity" />
         </activity>
         <activity android:name=".activities.UserActivity" />
-        <activity android:name=".activities.ItemActivity"></activity>
+        <activity android:name=".activities.ItemActivity" />
+        <activity android:name=".activities.Interpretation" />
+        <activity android:name=".activities.ExampleInstructions"
+            android:screenOrientation="landscape">
+
+        </activity>
     </application>
 
 </manifest>

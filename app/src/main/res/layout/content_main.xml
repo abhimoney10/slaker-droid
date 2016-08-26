@@ -1,21 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:showIn="@layout/activity_main"
     tools:context=".activities.MainActivity">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Slakes V.0.1"
+        android:id="@+id/title"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="56dp"
+        android:elegantTextHeight="true"
+        android:textColor="#364eb8" />
+
     <Button
         android:id="@+id/buttonInstructions"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:onClick="startInstructions"
-        android:layout_weight="1"
-        android:hint="@string/buttonInstructions"/>
+        android:hint="@string/buttonInstructions"
+        android:layout_above="@+id/buttonFirstPicture"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="136dp" />
     <Button
         android:id="@+id/buttonFirstPicture"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:onClick="startUserActivity"
-        android:hint="@string/buttonUserDetails"/>
-</LinearLayout>
+        android:hint="@string/buttonStartExperiment"
+        android:layout_gravity="center_vertical"
+        android:layout_marginBottom="170dp"
+        android:layout_above="@+id/nameCopyright"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Slakes V.0.1 - All rights reserved"
+        android:id="@+id/nameCopyright"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
+
+</RelativeLayout>

@@ -20,9 +20,15 @@
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="85dp"
-        android:layout_height="292dp"
+        android:layout_height="match_parent"
         android:layout_gravity="center_vertical"
         android:weightSum="1">
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="0.21" />
 
         <Button
             android:id="@+id/buttonFirstPicture"
@@ -32,11 +38,14 @@
             android:text="@string/buttonFirstPicture"
             android:layout_weight="0.00" />
 
-        <Space
+        <TextView
+            android:id="@id/timeLeft"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_weight="0.45" />
+            android:layout_weight="0.57"
+            android:gravity="center_vertical"
+            android:text="@string/timeLeft"/>
 
         <Button
             android:id="@+id/buttonBurstPicture"
@@ -44,8 +53,18 @@
             android:layout_height="wrap_content"
             android:hint="@string/buttonBurstPicture"
             android:text="@string/buttonBurstPicture"
+            android:visibility="invisible"
             android:layout_weight="0.19"
             android:textColor="@color/design_textinput_error_color_light" />
+
+        <Button
+            android:id="@+id/buttonBackInstructions"
+            android:layout_width="match_parent"
+            android:layout_height="32dp"
+            android:text="@string/buttonBackInstructions"
+            android:textSize="12sp"
+            android:onClick="startInstructions"
+            />
 
 
     </LinearLayout>

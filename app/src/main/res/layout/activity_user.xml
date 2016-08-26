@@ -16,8 +16,7 @@
         android:onClick="startFirstPicture"
         android:hint="@string/buttonFirstPicture"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="50dp" />
+        android:layout_centerHorizontal="true" />
 
     <EditText
         android:id="@+id/numAggregates"
@@ -27,7 +26,8 @@
         android:layout_marginTop="200dp"
         android:hint="@string/numAggregates"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        />
 
     <EditText
         android:id="@+id/projectName"
@@ -36,6 +36,7 @@
         android:layout_marginTop="100dp"
         android:hint="@string/projectName"
         android:layout_below="@+id/numAggregates"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:singleLine="true"/>
 
 </RelativeLayout>

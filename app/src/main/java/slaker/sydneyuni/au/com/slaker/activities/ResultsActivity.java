@@ -22,18 +22,18 @@ public class ResultsActivity extends Activity {
         String coefA =intent.getStringExtra(ExperimentActivity.COEF_A);
         resultCoefAtextView = (TextView) findViewById(R.id.activity_message_CoefA);
         resultCoefAtextView.setTextSize(40);
-        resultCoefAtextView.setText("Coefficient A is " + coefA);
+        resultCoefAtextView.setText(coefA);
 
 
         String coefB =intent.getStringExtra(ExperimentActivity.COEF_B);
         resultCoefBtextView = (TextView) findViewById(R.id.activity_message_CoefB);
         resultCoefBtextView.setTextSize(40);
-        resultCoefBtextView.setText("Coefficient B is " + coefB);
+        resultCoefBtextView.setText(coefB);
 
         String coefC =intent.getStringExtra(ExperimentActivity.COEF_C);
         resultCoefCtextView = (TextView) findViewById(R.id.activity_message_CoefC);
         resultCoefCtextView.setTextSize(40);
-        resultCoefCtextView.setText("Coefficient C is " + coefC);
+        resultCoefCtextView.setText(coefC);
 
 
     }

@@ -80,7 +80,9 @@ public class ExperimentActivity extends Activity implements CameraBridgeViewBase
             54,58,62,66,70,78,86,110,150,
             210,280,380,480,600
     };
+    BeeperControl beep;
 
+    //public TextView timeLeft = (TextView) findViewById(R.id.timeLeft);
 
 
     class matSorter implements Comparator<MatOfPoint> {
@@ -95,6 +97,68 @@ public class ExperimentActivity extends Activity implements CameraBridgeViewBase
                 return 0;
             }
         }
+    }
+    class BeeperControl {
+        private final ScheduledExecutorService scheduler =
+                Executors.newScheduledThreadPool(1);
+
+        public void beepForAnHour() {
+            final Runnable beeper = new Runnable() {
+                public void run() {
+
+                    if(count<601){
+
+
+                        slakingIndex=0;
+                        areaAggregates = binary.measureArea(contours);
+
+                        for (int aggregateId = 0; aggregateId < contours.size(); aggregateId++) {
+                            Log.d("EVENT", "run:  area for aggregate "+ aggregateId + "is : " + areaAggregates.get(aggregateId));
+                            slakingIndex+=(areaAggregates.get(aggregateId)-initialArea.get(aggregateId))/initialArea.get(aggregateId);
+                        }
+
+
+                        slakingIndex =slakingIndex/contours.size();
+                        Log.d("EVENT", "run:  contour size is "+ contours.size());
+                        Log.d("EVENT", "run:  Slaking index is " + slakingIndex);
+                        if(Arrays.asList(logSeq).contains(count)) {
+                            observations.add(fitter.createWeightedPoint(count, slakingIndex));
+                            areasArray.add(String.valueOf(slakingIndex));
+                            initialCoefA=slakingIndex;
+                        }
+
+                        //timeLeft.setText(getString(R.string.timeLeft,Precision.round(60/count,0)));
+                        count+=1;
+
+
+                    }else{
+
+                        exporter = new DataExporter();
+                        exporter.exportCsv(areasArray,projectName);
+                        SLAKING_RESULT = fitter.fitCurve(observations);
+
+                        coefA=String.valueOf(Precision.round((double)Array.get(SLAKING_RESULT,0),1));
+                        coefB=String.valueOf(Precision.round((double)Array.get(SLAKING_RESULT,1),1));
+                        coefC=String.valueOf(Precision.round((double)Array.get(SLAKING_RESULT,2),1));
+
+                        Log.d("event", "run: Gompertz coefficient A is: " + coefA);
+                        Log.d("event", "run: Gompertz coefficient B is: " + coefB);
+                        Log.d("event", "run: Gompertz coefficient C is: " + coefC);
+                        sendResult();
+
+                    }
+                }
+            };
+            final ScheduledFuture<?> beeperHandle =
+                    scheduler.scheduleAtFixedRate(beeper, 1,1, SECONDS);
+            scheduler.schedule(new Runnable() {
+                public void run() { beeperHandle.cancel(true); }
+            }, 60 * 10, SECONDS);
+
+            firstPicBool=beeperHandle.isDone();
+
+        }
+
     }
 
 
@@ -127,6 +191,12 @@ public class ExperimentActivity extends Activity implements CameraBridgeViewBase
         startActivity(intentResultActivity);
     }
 
+
+    public void backToMain() {
+        Intent intentBack = new Intent(this, MainActivity.class);
+        startActivity(intentBack);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -150,6 +220,11 @@ public class ExperimentActivity extends Activity implements CameraBridgeViewBase
         Button firstPicture = (Button) findViewById(R.id.buttonFirstPicture);
         firstPicture.setOnClickListener(this);
 
+        Button backInstructions = (Button) findViewById(R.id.buttonBackInstructions);
+        backInstructions.setOnClickListener(this);
+
+
+
         binary = new Segmenter();
         areaAggregates = new ArrayList<>();
         contours = new ArrayList<>();
@@ -168,6 +243,7 @@ public class ExperimentActivity extends Activity implements CameraBridgeViewBase
         if (mOpenCvCameraView != null) {
             mOpenCvCameraView.disableView();
         }
+        beep.scheduler.shutdown();
     }
     @Override
     public void onCameraViewStarted(int width, int height) {
@@ -231,7 +307,7 @@ public class ExperimentActivity extends Activity implements CameraBridgeViewBase
 
                 initialArea = binary.measureArea(contours);
 
-                if (contours.size() < 3){
+                if (contours.size() < Integer.valueOf(numAggregates)){
                     Log.d("EVENT", "no contours found");
                     firstPicBool = false;
                 }else{
@@ -243,6 +319,10 @@ public class ExperimentActivity extends Activity implements CameraBridgeViewBase
                     }
 
                     firstPicBool = true;
+
+                    Button startExperiment= (Button) findViewById(R.id.buttonBurstPicture);
+                    startExperiment.setVisibility(View.VISIBLE);
+
                 }
 
                 break;
@@ -263,77 +343,23 @@ public class ExperimentActivity extends Activity implements CameraBridgeViewBase
                     observations.add(fitter.createWeightedPoint(1, 0));
                     count = 2;
 
-                 class BeeperControl {
-                    private final ScheduledExecutorService scheduler =
-                            Executors.newScheduledThreadPool(1);
 
-                    public void beepForAnHour() {
-                        final Runnable beeper = new Runnable() {
-                            public void run() {
-
-                                if(count<601){
-
-                                    slakingIndex=0;
-                                    areaAggregates = binary.measureArea(contours);
-
-                                    for (int aggregateId = 0; aggregateId < contours.size(); aggregateId++) {
-                                        Log.d("EVENT", "run:  area for aggregate "+ aggregateId + "is : " + areaAggregates.get(aggregateId));
-                                        slakingIndex+=(areaAggregates.get(aggregateId)-initialArea.get(aggregateId))/initialArea.get(aggregateId);
-                                        }
-
-
-                                    slakingIndex =slakingIndex/contours.size();
-                                    Log.d("EVENT", "run:  contour size is "+ contours.size());
-                                    Log.d("EVENT", "run:  Slaking index is " + slakingIndex);
-                                    if(Arrays.asList(logSeq).contains(count)) {
-                                        observations.add(fitter.createWeightedPoint(count, slakingIndex));
-                                        areasArray.add(String.valueOf(slakingIndex));
-                                        initialCoefA=slakingIndex;
-                                    }
-
-
-                                    count+=1;
-
-
-                                }else{
-
-                                    exporter = new DataExporter();
-                                    exporter.exportCsv(areasArray,projectName);
-                                    SLAKING_RESULT = fitter.fitCurve(observations);
-
-                                    coefA=String.valueOf(Precision.round((double)Array.get(SLAKING_RESULT,0),1));
-                                    coefB=String.valueOf(Precision.round((double)Array.get(SLAKING_RESULT,1),1));
-                                    coefC=String.valueOf(Precision.round((double)Array.get(SLAKING_RESULT,2),1));
-
-                                    Log.d("event", "run: Gompertz coefficient A is: " + coefA);
-                                    Log.d("event", "run: Gompertz coefficient B is: " + coefB);
-                                    Log.d("event", "run: Gompertz coefficient C is: " + coefC);
-                                    sendResult();
-
-                                }
-                            }
-                        };
-                         final ScheduledFuture<?> beeperHandle =
-                                scheduler.scheduleAtFixedRate(beeper, 1,1, SECONDS);
-                        scheduler.schedule(new Runnable() {
-                            public void run() { beeperHandle.cancel(true); }
-                        }, 60 * 10, SECONDS);
-
-                        firstPicBool=beeperHandle.isDone();
-
-                    }
-
-                }
-
-
-                BeeperControl beep = new BeeperControl();
+                beep = new BeeperControl();
                 beep.beepForAnHour();
 
                 break;
 
+            case R.id.buttonBackInstructions:
+
+                beep.scheduler.shutdown();
+                backToMain();
 
         }
     }
+
+
+
+
 
 }
 
