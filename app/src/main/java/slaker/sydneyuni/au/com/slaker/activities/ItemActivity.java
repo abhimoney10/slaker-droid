@@ -39,7 +39,7 @@ public class ItemActivity extends AppCompatActivity {
         final Button goExperiment = (Button) findViewById(R.id.goExperimentButton);
         final Button exampleButton = (Button) findViewById(R.id.buttonExample);
 
-        if(currentPos==2){
+        if(currentPos==4){
             exampleButton.setVisibility(View.VISIBLE);
 
         }else{
@@ -59,7 +59,7 @@ public class ItemActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                if(currentPos==2){
+                if(currentPos==3){
                     exampleButton.setVisibility(View.VISIBLE);
                 }else{
                     exampleButton.setVisibility(View.INVISIBLE);

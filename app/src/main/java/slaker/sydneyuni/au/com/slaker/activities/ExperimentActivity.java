@@ -9,6 +9,7 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.TextView;
 
 import org.apache.commons.math3.fitting.WeightedObservedPoint;
 import org.apache.commons.math3.util.Precision;
@@ -72,6 +73,7 @@ public class ExperimentActivity extends Activity implements CameraBridgeViewBase
     private String coefC;
     public static double initialCoefA;
 
+
     private Integer[] logSeq = new Integer[]{
             1,2,3,4,5,6,7,8,9,10,
             11,12,13,14,15,16,17,18,19,
@@ -81,8 +83,10 @@ public class ExperimentActivity extends Activity implements CameraBridgeViewBase
             210,280,380,480,600
     };
     BeeperControl beep;
+    TextView timeLeft;
+    String timeString;
 
-    //public TextView timeLeft = (TextView) findViewById(R.id.timeLeft);
+
 
 
     class matSorter implements Comparator<MatOfPoint> {
@@ -99,6 +103,18 @@ public class ExperimentActivity extends Activity implements CameraBridgeViewBase
         }
     }
     class BeeperControl {
+
+        /////
+        final Runnable timeText = new Runnable(){
+            public void run() {
+
+                timeString = String.valueOf((602 - count) / 60) + " Minutes left";
+                timeLeft.setText(timeString);
+
+            }
+        };
+
+        /////
         private final ScheduledExecutorService scheduler =
                 Executors.newScheduledThreadPool(1);
 
@@ -127,8 +143,10 @@ public class ExperimentActivity extends Activity implements CameraBridgeViewBase
                             initialCoefA=slakingIndex;
                         }
 
-                        //timeLeft.setText(getString(R.string.timeLeft,Precision.round(60/count,0)));
+
+//                        timeLeft.setText("hola");
                         count+=1;
+
 
 
                     }else{
@@ -147,7 +165,11 @@ public class ExperimentActivity extends Activity implements CameraBridgeViewBase
                         sendResult();
 
                     }
+/////
+                    ExperimentActivity.this.runOnUiThread(timeText);
+/////
                 }
+
             };
             final ScheduledFuture<?> beeperHandle =
                     scheduler.scheduleAtFixedRate(beeper, 1,1, SECONDS);
@@ -197,8 +219,10 @@ public class ExperimentActivity extends Activity implements CameraBridgeViewBase
         startActivity(intentBack);
     }
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_experiment_);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -223,7 +247,7 @@ public class ExperimentActivity extends Activity implements CameraBridgeViewBase
         Button backInstructions = (Button) findViewById(R.id.buttonBackInstructions);
         backInstructions.setOnClickListener(this);
 
-
+        timeLeft = (TextView) findViewById(R.id.timeLeft);
 
         binary = new Segmenter();
         areaAggregates = new ArrayList<>();
@@ -242,9 +266,16 @@ public class ExperimentActivity extends Activity implements CameraBridgeViewBase
         super.onDestroy();
         if (mOpenCvCameraView != null) {
             mOpenCvCameraView.disableView();
+            backToMain();
         }
-        beep.scheduler.shutdown();
+
+        if(beep!=null) {
+            beep.scheduler.shutdown();
+            backToMain();
+        }
+
     }
+
     @Override
     public void onCameraViewStarted(int width, int height) {
 
@@ -347,12 +378,18 @@ public class ExperimentActivity extends Activity implements CameraBridgeViewBase
                 beep = new BeeperControl();
                 beep.beepForAnHour();
 
+
                 break;
 
             case R.id.buttonBackInstructions:
 
-                beep.scheduler.shutdown();
-                backToMain();
+                if(beep!=null) {
+                    beep.scheduler.shutdown();
+                    backToMain();
+                }else{
+                    backToMain();
+                }
+
 
         }
     }

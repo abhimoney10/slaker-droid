@@ -9,6 +9,8 @@ import slaker.sydneyuni.au.com.slaker.R;
 
 public class SplashScreen extends Activity {
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

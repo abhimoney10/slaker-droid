@@ -1,8 +1,11 @@
 package slaker.sydneyuni.au.com.slaker.activities;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -12,8 +15,15 @@ import slaker.sydneyuni.au.com.slaker.R;
 public class MainActivity extends Activity {
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        if (Build.VERSION.SDK_INT >= 23) {
+            ActivityCompat.requestPermissions(this,new String[]{
+                    Manifest.permission.CAMERA,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE}
+                    ,1);
+        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 

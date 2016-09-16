@@ -85,8 +85,13 @@ public class ExampleInstructions extends Activity implements CameraBridgeViewBas
     };
 
 
-    public void backToMain() {
+    public void backToInstructions() {
         Intent intentBack = new Intent(this, InstructionsActivity.class);
+        startActivity(intentBack);
+    }
+
+    public void backToMain() {
+        Intent intentBack = new Intent(this, MainActivity.class);
         startActivity(intentBack);
     }
 
@@ -127,7 +132,9 @@ public class ExampleInstructions extends Activity implements CameraBridgeViewBas
         super.onDestroy();
         if (mOpenCvCameraView != null) {
             mOpenCvCameraView.disableView();
+            backToInstructions();
         }
+        backToInstructions();
     }
     @Override
     public void onCameraViewStarted(int width, int height) {
@@ -201,7 +208,7 @@ public class ExampleInstructions extends Activity implements CameraBridgeViewBas
 
             case R.id.buttonBackInstructionsExample:
 
-                backToMain();
+                backToInstructions();
 
         }
     }

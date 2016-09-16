@@ -15,5 +15,5 @@
     <string name="goExperiment">Start experiment</string>
     <string name="exampleButton">Give it a try!</string>
     <string name="buttonBackInstructions">Back</string>
-    <string name="timeLeft">%1$d minutes left</string>
+    <string name="timeLeft">minutes left</string>
 </resources>
