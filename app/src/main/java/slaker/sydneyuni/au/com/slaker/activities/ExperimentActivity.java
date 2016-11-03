@@ -179,7 +179,6 @@ public class ExperimentActivity extends Activity implements CameraBridgeViewBase
 
                         for (int aggregateId = 0; aggregateId < contours.size(); aggregateId++) {
                             initialCoefA = slakingIndexArray[aggregateId][count - 2];
-                            exporter.exportCsv(areasArray.get(aggregateId), projectName+aggregateId);
                             Log.d("event",fitter.fitCurve(observations.get(aggregateId)).length + "Coefficients found");
                             if(fitter.fitCurve(observations.get(aggregateId)).length<3) {
                                 Log.d("event","It was impossible to fit a curve to soil aggregate : " + aggregateId + "Using less observations");
@@ -216,6 +215,9 @@ public class ExperimentActivity extends Activity implements CameraBridgeViewBase
                         sdFinal= String.valueOf(Precision.round(standardDeviation.evaluate(sd),1));
 
                         Log.d("event", "run: Standard deviation of the result is : " + sdFinal);
+                        Log.d("event", "Exporting data ...  ");
+
+                        exporter.exportCsv(areasArray, projectName);
                         sendResult();
 
                     }

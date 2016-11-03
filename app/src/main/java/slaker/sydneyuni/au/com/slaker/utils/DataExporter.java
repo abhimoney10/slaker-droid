@@ -12,7 +12,7 @@ import java.util.List;
 
 
 public class DataExporter {
-    public void exportCsv(List<String> areas, String experimentName) {
+    public void exportCsv(ArrayList<ArrayList<String>> areas, String experimentName) {
 
         File location = new File(Environment.getExternalStorageDirectory() + "/Slakes/");
         if(!location.exists()){
@@ -27,9 +27,9 @@ public class DataExporter {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        String[] stringArray = areas.toArray(new String[0]);
 
         List<String[]> data = new ArrayList<>();
+
 
         data.add(new String[] {"1","2","3","4","5","6","7","8","9","10",
                 "11","12","13","14","15","16","17","18","19",
@@ -37,7 +37,12 @@ public class DataExporter {
                 "32","34","36","38","40","42","44","46","48","50",
                 "54","58","62","66","70","78","86","110","150",
                 "210","280","380","480","600"});
-        data.add(stringArray);
+
+        for (int i = 0; i < areas.size(); i++) {
+            String[] stringArray = areas.get(i).toArray(new String[0]);
+            data.add(stringArray);
+        }
+
 
         if (writer != null) {
             writer.writeAll(data);
