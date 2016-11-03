@@ -11,6 +11,7 @@ public class ResultsActivity extends Activity {
     TextView resultCoefAtextView;
     TextView resultCoefBtextView;
     TextView resultCoefCtextView;
+    TextView resultsdFinalView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +35,11 @@ public class ResultsActivity extends Activity {
         resultCoefCtextView = (TextView) findViewById(R.id.activity_message_CoefC);
         resultCoefCtextView.setTextSize(40);
         resultCoefCtextView.setText(coefC);
+
+        String sdFinal =intent.getStringExtra(ExperimentActivity.SDFINAL);
+        resultsdFinalView = (TextView) findViewById(R.id.activity_message_sdFinal);
+        resultsdFinalView.setTextSize(40);
+        resultsdFinalView.setText(sdFinal);
 
 
     }

@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import org.apache.commons.math3.fitting.WeightedObservedPoint;
+import org.apache.commons.math3.stat.descriptive.moment.StandardDeviation;
 import org.apache.commons.math3.util.Precision;
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase;
@@ -23,7 +24,6 @@ import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.imgproc.Imgproc;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -59,19 +59,19 @@ public class ExperimentActivity extends Activity implements CameraBridgeViewBase
     public boolean onTouchBoolean = true;
 
 
-    public List<String> areasArray;
-    public ArrayList<WeightedObservedPoint> observations;
+    public ArrayList<ArrayList<String>> areasArray;
+    public ArrayList<ArrayList<WeightedObservedPoint>> observations;
 
     ArrayList<Double> initialArea;
     double slakingIndex;
     ArrayList<Double> areaAggregates;
 
     private List<MatOfPoint> contours;
-    private double[] SLAKING_RESULT;
-    private String coefA;
-    private String coefB;
-    private String coefC;
-    public static double initialCoefA;
+    private String coefA = "";
+    private String coefB = "";
+    private String coefC = "";
+    private String sdFinal;
+    public static double initialCoefA=0d;
 
 
     private Integer[] logSeq = new Integer[]{
@@ -85,7 +85,7 @@ public class ExperimentActivity extends Activity implements CameraBridgeViewBase
     BeeperControl beep;
     TextView timeLeft;
     String timeString;
-
+    Double[][] slakingIndexArray;
 
 
 
@@ -108,7 +108,7 @@ public class ExperimentActivity extends Activity implements CameraBridgeViewBase
         final Runnable timeText = new Runnable(){
             public void run() {
 
-                timeString = String.valueOf((602 - count) / 60) + " Minutes left";
+                timeString = String.valueOf((601 - count) / 60) + " Minutes left";
                 timeLeft.setText(timeString);
 
             }
@@ -122,46 +122,100 @@ public class ExperimentActivity extends Activity implements CameraBridgeViewBase
             final Runnable beeper = new Runnable() {
                 public void run() {
 
-                    if(count<601){
+                    if(count<601) {
 
 
-                        slakingIndex=0;
+                        slakingIndex = 0;
                         areaAggregates = binary.measureArea(contours);
 
-                        for (int aggregateId = 0; aggregateId < contours.size(); aggregateId++) {
-                            Log.d("EVENT", "run:  area for aggregate "+ aggregateId + "is : " + areaAggregates.get(aggregateId));
-                            slakingIndex+=(areaAggregates.get(aggregateId)-initialArea.get(aggregateId))/initialArea.get(aggregateId);
+                        if(count==1){
+                            for (int aggregateId = 0; aggregateId < contours.size(); aggregateId++) {
+                                slakingIndexArray[aggregateId][count - 1]=slakingIndex;
+                            }
+                        }else {
+
+                            for (int aggregateId = 0; aggregateId < contours.size(); aggregateId++) {
+                                Log.d("EVENT", "run:  area for aggregate " + aggregateId + " is : " + areaAggregates.get(aggregateId));
+                                slakingIndex += (areaAggregates.get(aggregateId) - initialArea.get(aggregateId)) / initialArea.get(aggregateId);
+                                Log.d("EVENT", "run:  contour size is " + contours.size());
+                                slakingIndexArray[aggregateId][count - 1] = slakingIndex;
+                                Log.d("EVENT", "run:  Slaking index for aggregate " + aggregateId + " is " + slakingIndexArray[aggregateId][count - 1]);
+                            }
                         }
+//
+//
+                        Log.d("EVENT", "Count is " + count);
 
 
-                        slakingIndex =slakingIndex/contours.size();
-                        Log.d("EVENT", "run:  contour size is "+ contours.size());
-                        Log.d("EVENT", "run:  Slaking index is " + slakingIndex);
+
                         if(Arrays.asList(logSeq).contains(count)) {
-                            observations.add(fitter.createWeightedPoint(count, slakingIndex));
-                            areasArray.add(String.valueOf(slakingIndex));
-                            initialCoefA=slakingIndex;
+                            for (int aggregateId = 0; aggregateId < contours.size(); aggregateId++) {
+                                observations.add(new ArrayList<WeightedObservedPoint>());
+                                areasArray.add(new ArrayList<String>());
+                                observations.get(aggregateId).add(fitter.createWeightedPoint(count, slakingIndexArray[aggregateId][count-1]));
+                                areasArray.get(aggregateId).add(String.valueOf(slakingIndexArray[aggregateId][count-1]));
+
+                                Log.d("EVENT", "run: Slaking index values are "  + areasArray.get(aggregateId).size());
+
+                            }
                         }
 
-
-//                        timeLeft.setText("hola");
                         count+=1;
 
+                        Log.d("EVENT", "Success");
+                        Log.d("EVENT", "Count is " + count);
 
+                    } else {
 
-                    }else{
+                        Log.d("event","starting analysis ...");
+                        Log.d("event","Initial guess for Gompertz fitting is: " + slakingIndexArray[0][count - 2]);
 
+                        Double tmpA = 0d;
+                        Double tmpB = 0d;
+                        Double tmpC = 0d;
+                        double[]sd = new double[contours.size()];
+                        StandardDeviation standardDeviation = new StandardDeviation(false);
                         exporter = new DataExporter();
-                        exporter.exportCsv(areasArray,projectName);
-                        SLAKING_RESULT = fitter.fitCurve(observations);
 
-                        coefA=String.valueOf(Precision.round((double)Array.get(SLAKING_RESULT,0),1));
-                        coefB=String.valueOf(Precision.round((double)Array.get(SLAKING_RESULT,1),1));
-                        coefC=String.valueOf(Precision.round((double)Array.get(SLAKING_RESULT,2),1));
+                        for (int aggregateId = 0; aggregateId < contours.size(); aggregateId++) {
+                            initialCoefA = slakingIndexArray[aggregateId][count - 2];
+                            exporter.exportCsv(areasArray.get(aggregateId), projectName+aggregateId);
+                            Log.d("event",fitter.fitCurve(observations.get(aggregateId)).length + "Coefficients found");
+                            if(fitter.fitCurve(observations.get(aggregateId)).length<3) {
+                                Log.d("event","It was impossible to fit a curve to soil aggregate : " + aggregateId + "Using less observations");
+                            }
+
+                            Log.d("event", "run: Gompertz coefficients for "+ aggregateId + "is: " + Arrays.toString(fitter.fitCurve(observations.get(aggregateId))));
+                            Log.d("event", "run: Coef A for sample " + aggregateId + " is " + fitter.fitCurve(observations.get(aggregateId))[0]);
+
+
+                            tmpA += fitter.fitCurve(observations.get(aggregateId))[0];
+                            tmpB += fitter.fitCurve(observations.get(aggregateId))[1];
+                            tmpC += fitter.fitCurve(observations.get(aggregateId))[2];
+
+                            sd[aggregateId]= Precision.round(fitter.fitCurve(observations.get(aggregateId))[0],1);
+                        }
+
+                        tmpA=Precision.round(tmpA/contours.size(), 1);
+                        tmpB=Precision.round(tmpB/contours.size(), 1);
+                        tmpC=Precision.round(tmpC/contours.size(), 1);
+
+                        if(tmpA<0){
+                            tmpA=0.0;
+                        }
+
+                        coefA = String.valueOf(tmpA);
+                        coefB = String.valueOf(tmpB);
+                        coefC = String.valueOf(tmpC);
+
 
                         Log.d("event", "run: Gompertz coefficient A is: " + coefA);
                         Log.d("event", "run: Gompertz coefficient B is: " + coefB);
                         Log.d("event", "run: Gompertz coefficient C is: " + coefC);
+
+                        sdFinal= String.valueOf(Precision.round(standardDeviation.evaluate(sd),1));
+
+                        Log.d("event", "run: Standard deviation of the result is : " + sdFinal);
                         sendResult();
 
                     }
@@ -175,7 +229,7 @@ public class ExperimentActivity extends Activity implements CameraBridgeViewBase
                     scheduler.scheduleAtFixedRate(beeper, 1,1, SECONDS);
             scheduler.schedule(new Runnable() {
                 public void run() { beeperHandle.cancel(true); }
-            }, 60 * 10, SECONDS);
+            }, (60 * 10)+1, SECONDS);
 
             firstPicBool=beeperHandle.isDone();
 
@@ -188,6 +242,7 @@ public class ExperimentActivity extends Activity implements CameraBridgeViewBase
     public final static String COEF_A = "com.slaker.utils.COEF_A";
     public final static String COEF_B = "com.slaker.utils.COEF_B";
     public final static String COEF_C = "com.slaker.utils.COEF_C";
+    public final static String SDFINAL = "com.slaker.utils.sdFinal";
 
     private BaseLoaderCallback mLoaderCallBack = new BaseLoaderCallback(this) {
         @Override
@@ -210,6 +265,7 @@ public class ExperimentActivity extends Activity implements CameraBridgeViewBase
         intentResultActivity.putExtra(COEF_A, coefA);
         intentResultActivity.putExtra(COEF_B, coefB);
         intentResultActivity.putExtra(COEF_C, coefC);
+        intentResultActivity.putExtra(SDFINAL, sdFinal);
         startActivity(intentResultActivity);
     }
 
@@ -334,6 +390,7 @@ public class ExperimentActivity extends Activity implements CameraBridgeViewBase
                 areasArray = new ArrayList<>();
                 fitter = new CurveFitter();
                 observations = new ArrayList<>();
+                slakingIndexArray = new Double[Integer.valueOf(numAggregates)][600];
 
 
                 initialArea = binary.measureArea(contours);
@@ -370,9 +427,12 @@ public class ExperimentActivity extends Activity implements CameraBridgeViewBase
                 if(onTouchBoolean){
                     onTouchBoolean = false;
                 }
-
-                    observations.add(fitter.createWeightedPoint(1, 0));
-                    count = 2;
+                observations.add(new ArrayList<WeightedObservedPoint>());
+                for (int aggregateId = 0; aggregateId < contours.size(); aggregateId++) {
+                    observations.get(count).add(fitter.createWeightedPoint(1, 0));
+                }
+                Log.d("EVENT", "SUCCESS");
+                    count = 1;
 
 
                 beep = new BeeperControl();
