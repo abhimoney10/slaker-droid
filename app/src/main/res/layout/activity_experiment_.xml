@@ -7,14 +7,15 @@
     android:layout_height="fill_parent"
     tools:context=".activities.ExperimentActivity"
     android:orientation="horizontal">
-                <org.opencv.android.JavaCameraView
-                    android:id="@+id/FirstPictureCameraView"
-                    android:layout_height="fill_parent"
-                    opencv:show_fps="true"
-                    opencv:camera_id="any"
-                    android:layout_width="fill_parent"
-                    android:layout_weight="2.27">
-            </org.opencv.android.JavaCameraView>
+
+        <org.opencv.android.JavaCameraView
+            android:id="@+id/FirstPictureCameraView"
+            android:layout_height="fill_parent"
+            opencv:show_fps="true"
+            opencv:camera_id="any"
+            android:layout_width="fill_parent"
+            android:layout_weight="2.27">
+    </org.opencv.android.JavaCameraView>
 
 
     <LinearLayout
@@ -28,7 +29,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_weight="0.21" />
+            android:layout_weight="0.14" />
 
         <Button
             android:id="@+id/buttonFirstPicture"
@@ -36,6 +37,7 @@
             android:layout_height="wrap_content"
             android:hint="@string/buttonFirstPicture"
             android:text="@string/buttonFirstPicture"
+            android:textSize="11sp"
             android:layout_weight="0.00" />
 
         <TextView
@@ -44,8 +46,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_weight="0.57"
-            android:gravity="center_vertical|center_horizontal"
-            android:text="@string/timeLeft"/>
+            android:gravity="center_vertical|center_horizontal"/>
 
         <Button
             android:id="@+id/buttonBurstPicture"
@@ -54,13 +55,13 @@
             android:hint="@string/buttonBurstPicture"
             android:text="@string/buttonBurstPicture"
             android:visibility="invisible"
-            android:layout_weight="0.19"
+            android:layout_weight="0.12"
             android:textColor="@color/design_textinput_error_color_light" />
 
         <Button
             android:id="@+id/buttonBackInstructions"
             android:layout_width="match_parent"
-            android:layout_height="32dp"
+            android:layout_height="35dp"
             android:text="@string/buttonBackInstructions"
             android:textSize="12sp"
             android:onClick="startInstructions"

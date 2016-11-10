@@ -42,8 +42,8 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 
 public class ExperimentActivity extends Activity implements CameraBridgeViewBase.CvCameraViewListener2, View.OnTouchListener, View.OnClickListener{
 
-    String projectName;
-    String numAggregates;
+    private String projectName;
+    private String numAggregates;
 
     private Segmenter binary;
     private CurveFitter fitter;
@@ -62,9 +62,9 @@ public class ExperimentActivity extends Activity implements CameraBridgeViewBase
     public ArrayList<ArrayList<String>> areasArray;
     public ArrayList<ArrayList<WeightedObservedPoint>> observations;
 
-    ArrayList<Double> initialArea;
-    double slakingIndex;
-    ArrayList<Double> areaAggregates;
+    private ArrayList<Double> initialArea;
+    private double slakingIndex;
+    private ArrayList<Double> areaAggregates;
 
     private List<MatOfPoint> contours;
     private String coefA = "";
@@ -82,10 +82,10 @@ public class ExperimentActivity extends Activity implements CameraBridgeViewBase
             54,58,62,66,70,78,86,110,150,
             210,280,380,480,600
     };
-    BeeperControl beep;
-    TextView timeLeft;
-    String timeString;
-    Double[][] slakingIndexArray;
+
+    private TenMinutesTest beep;
+    private TextView timeLeft;
+    private Double[][] slakingIndexArray;
 
 
 
@@ -102,23 +102,25 @@ public class ExperimentActivity extends Activity implements CameraBridgeViewBase
             }
         }
     }
-    class BeeperControl {
-
-        /////
+    private class TenMinutesTest {
         final Runnable timeText = new Runnable(){
             public void run() {
 
-                timeString = String.valueOf((601 - count) / 60) + " Minutes left";
+                String timeString;
+                if((601 - count) / 60 < 1){
+                    timeString = String.valueOf(601 - count) + " Seconds left";
+                }else {
+                    timeString = String.valueOf((601 - count) / 60) + " Minutes left";
+                }
                 timeLeft.setText(timeString);
 
             }
         };
 
-        /////
         private final ScheduledExecutorService scheduler =
                 Executors.newScheduledThreadPool(1);
 
-        public void beepForAnHour() {
+        public void MultipleFit() {
             final Runnable beeper = new Runnable() {
                 public void run() {
 
@@ -217,7 +219,7 @@ public class ExperimentActivity extends Activity implements CameraBridgeViewBase
                         Log.d("event", "run: Standard deviation of the result is : " + sdFinal);
                         Log.d("event", "Exporting data ...  ");
 
-                        exporter.exportCsv(areasArray, projectName);
+                        exporter.exportCsv(areasArray, projectName,coefA,coefB,coefC,sdFinal);
                         sendResult();
 
                     }
@@ -238,7 +240,6 @@ public class ExperimentActivity extends Activity implements CameraBridgeViewBase
         }
 
     }
-
 
 
     public final static String COEF_A = "com.slaker.utils.COEF_A";
@@ -370,12 +371,7 @@ public class ExperimentActivity extends Activity implements CameraBridgeViewBase
     }
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-
-        if(onTouchBoolean){
-            onTouchBoolean = false;
-        }else {
-            onTouchBoolean = true;
-        }
+        onTouchBoolean = !onTouchBoolean;
         return false;
     }
     @Override
@@ -437,8 +433,8 @@ public class ExperimentActivity extends Activity implements CameraBridgeViewBase
                     count = 1;
 
 
-                beep = new BeeperControl();
-                beep.beepForAnHour();
+                beep = new TenMinutesTest();
+                beep.MultipleFit();
 
 
                 break;

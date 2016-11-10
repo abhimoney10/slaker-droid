@@ -3,6 +3,7 @@ package slaker.sydneyuni.au.com.slaker.activities;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.WindowManager;
 import android.widget.TextView;
 
 import slaker.sydneyuni.au.com.slaker.R;
@@ -16,6 +17,7 @@ public class ResultsActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setContentView(R.layout.activity_results);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         super.onCreate(savedInstanceState);
 
         Intent intent = getIntent();
