@@ -120,7 +120,7 @@ public class ExperimentActivity extends Activity implements CameraBridgeViewBase
         private final ScheduledExecutorService scheduler =
                 Executors.newScheduledThreadPool(1);
 
-        public void MultipleFit() {
+        private void MultipleFit() {
             final Runnable beeper = new Runnable() {
                 public void run() {
 

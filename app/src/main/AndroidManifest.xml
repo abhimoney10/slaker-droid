@@ -62,7 +62,9 @@
         </activity>
         <activity
             android:name=".activities.ResultsActivity"
+            android:screenOrientation="portrait"
             android:parentActivityName=".activities.ExperimentActivity">
+            android:screenOrientation="portrait"/>
             <intent-filter>
                 <action android:name="slaker.sydneyuni.au.com.slaker.ResultsActivity" />
 
