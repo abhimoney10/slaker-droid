@@ -10,13 +10,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Slakes V.0.1"
+        android:text="Slakes Alpha Version"
         android:id="@+id/title"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="56dp"
         android:elegantTextHeight="true"
-        android:textColor="#364eb8" />
+        android:textColor="#364eb8"/>
 
     <Button
         android:id="@+id/buttonInstructions"
@@ -26,7 +26,7 @@
         android:hint="@string/buttonInstructions"
         android:layout_above="@+id/buttonFirstPicture"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="136dp" />
+        android:layout_marginBottom="136dp"/>
     <Button
         android:id="@+id/buttonFirstPicture"
         android:layout_width="wrap_content"
@@ -36,14 +36,14 @@
         android:layout_gravity="center_vertical"
         android:layout_marginBottom="170dp"
         android:layout_above="@+id/nameCopyright"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Slakes V.0.1 - All rights reserved"
+        android:text="Slakes Alpha.Version - All rights reserved"
         android:id="@+id/nameCopyright"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"/>
 
 </RelativeLayout>

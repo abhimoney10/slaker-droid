@@ -34,7 +34,7 @@ public class ResultsActivity extends Activity {
         circle= resultCoefAtextView.getBackground();
 
         if(Double.parseDouble(coefA)<=3){
-            resultExplained.setText("Good job, you have a very stable soil");
+            resultExplained.setText("Good job, you have a stable soil");
             color=Color.parseColor("#FF99CC00");
             circle.setColorFilter(color, PorterDuff.Mode.SRC_ATOP);
 

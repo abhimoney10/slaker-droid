@@ -30,14 +30,14 @@ public class CustomAdapter extends BaseAdapter{
             };
     public String[] details=
             {
-                    "Slakes is the mobile version of the soil aggregate stability methodology presented by Fajardo et al ,(2016)*.It measures how a soil aggregate 'slakes' in water and calculates an index that can be used as a stability indicator. \n" +
+                    "Slakes is the mobile version of the soil aggregate stability methodology presented by Fajardo et al ,(2016)* \n" +
                             "see : http://www.sciencedirect.com/science/article/pii/S0167198716300952",
                     "Make sure the soil samples are air dried for at least 24 hours and their sizes are between 2-15 mm.",
                     "Select the number of soil samples to be used (ideally 3 samples).And the name of your project, the app will save the results with that name in your phone's internal storage.",
                     "Make sure that the soil samples are against a white background.",
-                    "Place the soil samples inside an EMPTY Petri dish. Make sure they are properly recognized by your phone, you can do this by touching the screen as shown in the picture. Once you are sure that all of your samples are clearly detected you can press the button 'Take the first picture'.",
-                    "After taking the first picture, you may proceed with the experiment. Place the soil samples inside a Petri dish FULL OF WATER. MAKE SURE THAT THEY TOUCH THE WATER AT THE SAME TIME. Immediately after (between 1 to 2 seconds after) press the 'Start' button. Make sure the soil samples don't touch each other otherwise they will be considered as a single piece of soil",
-                    "Once the experiment is finished, the result is expressed as a Slaking index coefficient, where values less than 3 will indicate high stability or 'good soil structure'. Between 3 to 7 moderate and higher than 7 low stability or 'poor soil structure'."
+                    "Place the soil samples inside an EMPTY Petri dish. Make sure they are properly recognized by your phone, you can do this by touching the screen as shown in the picture.",
+                    "After taking the first picture, you may proceed with the experiment. Place the soil samples inside a Petri dish FULL OF WATER. Immediately after press the 'Start' button. Make sure the soil samples don't touch each other otherwise they will be considered as a single piece of soil",
+                    "Once the experiment is finished, the result is expressed as a Slaking index coefficient, where values less than 3 will indicate high stability. Between 3 to 7 moderate and higher than 7 low stability."
             };
 
     public int[] imageSmall ={R.drawable.inst1,R.drawable.inst2,R.drawable.inst3,R.drawable.inst4,R.drawable.inst5,R.drawable.inst6,R.drawable.inst7};
