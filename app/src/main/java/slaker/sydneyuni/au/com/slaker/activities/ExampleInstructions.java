@@ -122,6 +122,13 @@ public class ExampleInstructions extends Activity implements CameraBridgeViewBas
 
     }
 
+    public void onPause() {
+        super.onPause();
+        if (mOpenCvCameraView != null) {
+            mOpenCvCameraView.disableView();
+        }
+    }
+
     public void onResume() {
         super.onResume();
         OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_1_0, this, mLoaderCallBack);

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
 import android.view.View;
@@ -321,19 +322,46 @@ public class ExperimentActivity extends Activity implements CameraBridgeViewBase
 
     }
 
+    public void onPause() {
+        super.onPause();
+        if (mOpenCvCameraView != null) {
+            mOpenCvCameraView.disableView();
+        }
+    }
+
+
     public void onDestroy() {
         super.onDestroy();
         if (mOpenCvCameraView != null) {
             mOpenCvCameraView.disableView();
-            backToMain();
         }
 
         if(beep!=null) {
             beep.scheduler.shutdown();
+        }
+        backToMain();
+    }
+
+
+    public boolean onKeyDown(int keyCode, KeyEvent event)
+    {
+        // Quit if back is pressed
+        if (keyCode == KeyEvent.KEYCODE_BACK)
+        {
+
+            if (mOpenCvCameraView != null) {
+                mOpenCvCameraView.disableView();
+            }
+
+            if(beep!=null) {
+                beep.scheduler.shutdown();
+            }
+
             backToMain();
         }
-
+        return super.onKeyDown(keyCode, event);
     }
+
 
     @Override
     public void onCameraViewStarted(int width, int height) {

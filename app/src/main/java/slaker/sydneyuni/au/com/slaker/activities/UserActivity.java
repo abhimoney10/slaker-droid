@@ -67,12 +67,16 @@ public class UserActivity extends AppCompatActivity {
 
 
         Intent intent = new Intent(this, ExperimentActivity.class);
-
         EditText editText1 = (EditText) findViewById(R.id.numAggregates);
         String numAggregates = editText1.getText().toString();
+
+        if(numAggregates.isEmpty()){
+            numAggregates = "1";
+            Toast defaultAggregate = Toast.makeText(this,"Num. of Aggregates set to 1",Toast.LENGTH_LONG);
+            defaultAggregate.show();
+        }
+
         intent.putExtra(messageAggregates, numAggregates);
-
-
 
         EditText editText2 = (EditText) findViewById(R.id.projectName);
         String projectName = editText2.getText().toString();

@@ -32,7 +32,7 @@ public class Segmenter {
         second thresholding foreground
         find contours and store them in contours object, the size should be equal to the number of soil aggregates
         Filter contours in order to select only the number of selected aggregates at the
-        beggining (Assuming that they are the two biggest)
+        beginning (Assuming that they are the two biggest)
         Draw contours over the input image and also store the contours in the markers to measure the area (I may erase this part)
         */
 

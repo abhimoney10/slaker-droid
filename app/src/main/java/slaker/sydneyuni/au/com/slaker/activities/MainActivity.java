@@ -2,10 +2,13 @@ package slaker.sydneyuni.au.com.slaker.activities;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -62,4 +65,33 @@ public class MainActivity extends Activity {
     }
 
 
+    public void watchYoutubeVideo(View view){
+        Intent appIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://youtu.be/GP7xiPzK_AM"));
+        Intent webIntent = new Intent(Intent.ACTION_VIEW,
+                Uri.parse("https://youtu.be/GP7xiPzK_AM"));
+        try {
+            startActivity(appIntent);
+        } catch (ActivityNotFoundException ex) {
+            startActivity(webIntent);
+        }
+    }
+
+    public boolean onKeyDown(int keyCode, KeyEvent event)
+    {
+        // Quit if back is pressed
+        if (keyCode == KeyEvent.KEYCODE_BACK)
+        {
+            moveTaskToBack(true);
+            return true;
+        }
+        System.gc();
+        System.exit(0);
+
+        return super.onKeyDown(keyCode, event);
+
+    }
+
+
+
 }
+
