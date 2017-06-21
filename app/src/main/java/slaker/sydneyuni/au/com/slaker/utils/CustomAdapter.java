@@ -17,6 +17,7 @@ public class CustomAdapter extends BaseAdapter{
 
     public String[] names =
             {
+                    "Before you start",
                     "About this app",
                     "Preparing your samples",
                     "Setting your experiment details",
@@ -29,7 +30,7 @@ public class CustomAdapter extends BaseAdapter{
 
             };
     public String[] details=
-            {
+            {       "Slakes uses the library 'OpenCV' (Open Source Computer Vision Library), in order to measure the area of soil aggregates, make sure you accept it's installation when required",
                     "Slakes is the mobile version of the soil aggregate stability methodology presented by Fajardo et al ,(2016)* \n" +
                             "see : http://www.sciencedirect.com/science/article/pii/S0167198716300952",
                     "Make sure the soil samples are air dried for at least 24 hours and their sizes are between 2-15 mm.",
@@ -40,8 +41,8 @@ public class CustomAdapter extends BaseAdapter{
                     "Once the experiment is finished, the result is expressed as a Slaking index coefficient, where values less than 3 will indicate high stability. Between 3 to 7 moderate and higher than 7 low stability."
             };
 
-    public int[] imageSmall ={R.drawable.inst1,R.drawable.inst2,R.drawable.inst3,R.drawable.inst4,R.drawable.inst5,R.drawable.inst6,R.drawable.inst7};
-    public int[] imageBig ={R.drawable.inst1big,R.drawable.inst2big,R.drawable.inst3big,R.drawable.inst4big,R.drawable.inst5big,R.drawable.inst6big,R.drawable.inst7big};
+    public int[] imageSmall ={R.drawable.inst0,R.drawable.inst1,R.drawable.inst2,R.drawable.inst3,R.drawable.inst4,R.drawable.inst5,R.drawable.inst6,R.drawable.inst7};
+    public int[] imageBig ={R.drawable.logopencv,R.drawable.inst1big,R.drawable.inst2big,R.drawable.inst3big,R.drawable.inst4big,R.drawable.inst5big,R.drawable.inst6big,R.drawable.inst7big};
 
 
     public CustomAdapter(Context ctx){
