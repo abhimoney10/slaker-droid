@@ -56,7 +56,7 @@
             android:text="@string/buttonBurstPicture"
             android:visibility="invisible"
             android:layout_weight="0.12"
-            android:textColor="@color/design_textinput_error_color_light" />
+            android:textColor="#FFD50000" />
 
         <Button
             android:id="@+id/buttonBackInstructions"

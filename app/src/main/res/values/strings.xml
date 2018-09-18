@@ -5,10 +5,7 @@
     <string name="buttonStartExperiment">Skip the instructions</string>
     <string name="buttonExample">Check a sample video </string>
     <string name="buttonFirstPicture">Reference image</string>
-    <string name="instructions">instructions</string>
-    <string name="buttonSaveImage">Save Image</string>
     <string name="buttonBurstPicture">Start</string>
-    <string name="buttonExportData">Export Data</string>
     <string name="numAggregates">Specify the number of soil aggregates</string>
     <string name="projectName">Specify the name of your project</string>
     <string name="nextInstructions">next</string>

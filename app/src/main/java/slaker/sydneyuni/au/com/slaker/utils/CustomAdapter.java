@@ -30,7 +30,7 @@ public class CustomAdapter extends BaseAdapter{
 
             };
     public String[] details=
-            {       "Slakes uses the library 'OpenCV' (Open Source Computer Vision Library), in order to measure the area of soil aggregates, make sure you accept it's installation when required",
+            {       "Slakes uses the open-source library 'OpenCV' (Open Source Computer Vision Library, BSD license), in order to measure the area of soil aggregates",
                     "Slakes is the mobile version of the soil aggregate stability methodology presented by Fajardo et al ,(2016)* \n" +
                             "see : http://www.sciencedirect.com/science/article/pii/S0167198716300952",
                     "Make sure the soil samples are air dried for at least 24 hours and their sizes are between 2-15 mm.",

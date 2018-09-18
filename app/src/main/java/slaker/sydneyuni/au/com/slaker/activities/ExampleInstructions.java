@@ -50,7 +50,7 @@ public class ExampleInstructions extends Activity implements CameraBridgeViewBas
     ArrayList<Double> areaAggregates;
 
     private List<MatOfPoint> contours;
-
+    private static String TAG="ExampleInstructionsActivity";
 
 
     class matSorter implements Comparator<MatOfPoint> {
@@ -129,10 +129,18 @@ public class ExampleInstructions extends Activity implements CameraBridgeViewBas
         }
     }
 
-    public void onResume() {
+    @Override
+    protected void onResume() {
         super.onResume();
-        OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_1_0, this, mLoaderCallBack);
+//        OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_1_0, this, mLoaderCallBack);
 
+        if(OpenCVLoader.initDebug()){
+            Log.d(TAG,"OpenCV loaded succesfully");
+            mLoaderCallBack.onManagerConnected(LoaderCallbackInterface.SUCCESS);
+
+        }else{
+            Log.d(TAG,"OpenCV not loaded caca");
+        }
     }
 
     public void onDestroy() {
@@ -174,11 +182,7 @@ public class ExampleInstructions extends Activity implements CameraBridgeViewBas
     @Override
     public boolean onTouch(View v, MotionEvent event) {
 
-        if(onTouchBoolean){
-            onTouchBoolean = false;
-        }else {
-            onTouchBoolean = true;
-        }
+        onTouchBoolean = !onTouchBoolean;
         return false;
     }
     @Override

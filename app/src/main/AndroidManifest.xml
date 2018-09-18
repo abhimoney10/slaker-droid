@@ -26,7 +26,7 @@
             android:name=".activities.MainActivity"
             android:label="@string/app_name">
             <intent-filter>
-                <action android:name="slaker.sydneyuni.au.com.slaker.MainActivity" />
+                <action android:name="slaker.sydneyuni.au.com.slaker.activities.MainActivity" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
@@ -36,7 +36,7 @@
             android:label="@string/buttonInstructions"
             android:parentActivityName=".activities.MainActivity">
             <intent-filter>
-                <action android:name="slaker.sydneyuni.au.com.slaker.InstructionsActivity" />
+                <action android:name="slaker.sydneyuni.au.com.slaker.activities.InstructionsActivity" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
@@ -51,7 +51,7 @@
             android:parentActivityName=".activities.MainActivity"
             android:screenOrientation="landscape">
             <intent-filter>
-                <action android:name="slaker.sydneyuni.au.com.slaker.ExperimentActivity" />
+                <action android:name="slaker.sydneyuni.au.com.slaker.activities.ExperimentActivity" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
@@ -66,7 +66,7 @@
             android:parentActivityName=".activities.ExperimentActivity">
             android:screenOrientation="portrait"/>
             <intent-filter>
-                <action android:name="slaker.sydneyuni.au.com.slaker.ResultsActivity" />
+                <action android:name="slaker.sydneyuni.au.com.slaker.activities.ResultsActivity" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>

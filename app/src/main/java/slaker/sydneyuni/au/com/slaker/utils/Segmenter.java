@@ -78,7 +78,7 @@ public class Segmenter {
             return contoursFg;
         }else {
             if (contoursFg.size() > numAggregates) {
-                Collections.sort((ArrayList) contoursFg, new matSorter()); // Sort the arraylist
+                Collections.sort(contoursFg, new matSorter()); // Sort the arraylist
                 contoursFg = contoursFg.subList(0, numAggregates);
             }
 

@@ -1,22 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
-    tools:context=".activities.MainActivity">
+    tools:showIn="@layout/activity_main"
+    tools:context=".activities.MainActivity"
+    android:orientation="vertical">
 
-    <android.support.design.widget.AppBarLayout
+    <TextView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        android:theme="@style/AppTheme.AppBarOverlay"
-        >
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Slakes - Alpha Version"
+        android:id="@+id/title"
+        android:elegantTextHeight="true"
+        android:textColor="#364eb8"
+        android:layout_marginTop="28dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="startInstructions"
+        android:hint="@string/buttonInstructions"
+        android:layout_below="@+id/title"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="11dp" />
+    <Button
+        android:id="@+id/buttonFirstPicture"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="startUserActivity"
+        android:hint="@string/buttonStartExperiment"
+        android:layout_gravity="center"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:id="@+id/buttonExample"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="watchYoutubeVideo"
+        android:hint="@string/buttonExample"
+        android:layout_gravity="center"
+        android:layout_above="@+id/nameCopyright"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="53dp" />
 
 
-    </android.support.design.widget.AppBarLayout>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Slakes Beta.Version - All rights reserved"
+        android:id="@+id/nameCopyright"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"/>
 
-    <include layout="@layout/content_main" />
-
-
-</android.support.design.widget.CoordinatorLayout>
+</RelativeLayout>

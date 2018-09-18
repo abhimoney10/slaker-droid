@@ -73,7 +73,7 @@ public class ExperimentActivity extends Activity implements CameraBridgeViewBase
     private String coefC = "";
     private String sdFinal;
     public static double initialCoefA=0d;
-
+    private static String TAG="MainActivity";
 
     private Integer[] logSeq = new Integer[]{
             1,2,3,4,5,6,7,8,9,10,
@@ -316,13 +316,22 @@ public class ExperimentActivity extends Activity implements CameraBridgeViewBase
 
     }
 
-    public void onResume() {
+    @Override
+    protected void onResume() {
         super.onResume();
-        OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_1_0, this, mLoaderCallBack);
+//        OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_1_0, this, mLoaderCallBack);
 
+        if(OpenCVLoader.initDebug()){
+            Log.d(TAG,"OpenCV loaded succesfully");
+            mLoaderCallBack.onManagerConnected(LoaderCallbackInterface.SUCCESS);
+
+        }else{
+            Log.d(TAG,"OpenCV not loaded ");
+        }
     }
 
-    public void onPause() {
+    @Override
+    protected void onPause() {
         super.onPause();
         if (mOpenCvCameraView != null) {
             mOpenCvCameraView.disableView();
@@ -330,7 +339,8 @@ public class ExperimentActivity extends Activity implements CameraBridgeViewBase
     }
 
 
-    public void onDestroy() {
+    @Override
+    protected void onDestroy() {
         super.onDestroy();
         if (mOpenCvCameraView != null) {
             mOpenCvCameraView.disableView();
@@ -375,11 +385,6 @@ public class ExperimentActivity extends Activity implements CameraBridgeViewBase
     public void onCameraViewStopped() {
         mImage.release();
         mImageB.release();
-
-
-
-
-
     }
     @Override
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {

@@ -1,30 +1,41 @@
 package slaker.sydneyuni.au.com.slaker.activities;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import org.opencv.android.OpenCVLoader;
+
 import slaker.sydneyuni.au.com.slaker.R;
 
-public class MainActivity extends Activity {
+public class MainActivity extends AppCompatActivity {
 
+    private static final String TAG="MainActivity";
 
+    static{
+        if(OpenCVLoader.initDebug()){
+            Log.d(TAG,"OpenCV loaded succesfully");
+        }else{
+            Log.d(TAG,"OpenCV not loaded caca");
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         if (Build.VERSION.SDK_INT >= 23) {
             ActivityCompat.requestPermissions(this,new String[]{
-                    Manifest.permission.CAMERA,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE}
+                            Manifest.permission.CAMERA,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE}
                     ,1);
         }
         super.onCreate(savedInstanceState);
@@ -90,8 +101,6 @@ public class MainActivity extends Activity {
         return super.onKeyDown(keyCode, event);
 
     }
-
-
 
 }
 
